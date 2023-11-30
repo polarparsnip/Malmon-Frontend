@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     const start = (url: string) => {
-      if (url.includes('search') || url.includes('limit')) {
+      if (url.includes('limit')) {
         setLoading(false);
       } else {
         setLoading(true);
@@ -25,14 +25,14 @@ export default function App({ Component, pageProps }: AppProps) {
       setError(true);
     }
     
-    Router.events.on("routeChangeStart", start);
-    Router.events.on("routeChangeComplete", end);
-    Router.events.on("routeChangeError", error);
+    Router.events.on('routeChangeStart', start);
+    Router.events.on('routeChangeComplete', end);
+    Router.events.on('routeChangeError', error);
 
     return () => {
-      Router.events.off("routeChangeStart", start);
-      Router.events.off("routeChangeComplete", end);
-      Router.events.off("routeChangeError", error);
+      Router.events.off('routeChangeStart', start);
+      Router.events.off('routeChangeComplete', end);
+      Router.events.off('routeChangeError', error);
     };
   }, []);
 

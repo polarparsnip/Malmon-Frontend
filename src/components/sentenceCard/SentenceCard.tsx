@@ -1,5 +1,5 @@
-import { Sentence } from "@/types"
-import s from "./sentenceCard.module.scss"
+import { Sentence } from '@/types'
+import s from './SentenceCard.module.scss'
 
 export default function SentenceCard(
     {value}: {value: Sentence}

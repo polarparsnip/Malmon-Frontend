@@ -13,10 +13,10 @@ export type User = {
     id: number;
     name: string;
     username: string;
-    created: string;
     // admin: boolean;
     completedSentences: number;
     completedVerifications: number;
+    created: string;
 };
 
 export type Users = {
