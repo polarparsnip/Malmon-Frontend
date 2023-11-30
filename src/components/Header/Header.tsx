@@ -1,6 +1,6 @@
-import { useUserContext } from "@/context";
-import Link from "next/link";
-import s from "./Header.module.scss";
+import { useUserContext } from '@/context';
+import Link from 'next/link';
+import s from './Header.module.scss';
 
 
 export default function Header() {
@@ -16,9 +16,17 @@ export default function Header() {
         </>
       ) : (
         <>
-          <h3><Link href='/sentence'>Einfalda</Link></h3>
-          <h3><Link href='/verify'>Yfirferð</Link></h3>
-          <h3><Link href='/account'>Minn Aðgangur</Link></h3>
+          {loginContext.userLoggedIn.login ? (
+            <>
+              <h3><Link href='/simplify'>Einfalda</Link></h3>
+              <h3><Link href='/verify'>Yfirferð</Link></h3>
+              <h3><Link href='/account'>Minn Aðgangur</Link></h3>
+            </>
+          ) : (
+            <>
+              <h3><Link href='/login'>Innskráning</Link></h3>
+            </>
+          )}
         </>
       )}
     </header>
