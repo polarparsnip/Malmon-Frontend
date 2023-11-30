@@ -1,3 +1,20 @@
+export type LinksProps = {
+    self: {
+      href: string;
+    };
+    prev?: {
+      href: string;
+    };
+    next?: {
+      href: string;
+    };
+};
+
+export type Query = {
+    offset: number;
+    limit: number;
+}
+
 export type Sentence = {
     id: number;
     sentence: string;
@@ -7,6 +24,20 @@ export type Sentence = {
 export type Sentences = {
     _links: LinksProps;
     sentences: Array<Sentence>;
+}
+
+export type SimplifiedSentence = {
+    id: number;
+    simplifiedsentence: string;
+    originalsentence: string;
+    userid: number;
+    verified: boolean;
+    created: string;
+}
+
+export type SimplifiedSentences = {
+    _links: LinksProps;
+    simplifiedSentences: Array<SimplifiedSentence>;
 }
 
 export type User = {
@@ -30,20 +61,3 @@ export type PagingProps = {
     items?: Array<Sentence> | Array<User>;
     _links: LinksProps;
 };
-
-export type LinksProps = {
-    self: {
-      href: string;
-    };
-    prev?: {
-      href: string;
-    };
-    next?: {
-      href: string;
-    };
-};
-
-export type Query = {
-    offset: number;
-    limit: number;
-}

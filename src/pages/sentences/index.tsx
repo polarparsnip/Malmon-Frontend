@@ -40,7 +40,7 @@ const adminPatchSentenceHandler = async (event: any, token: any, sentenceId: num
     formData.append('sentence', sentence);
   }
 
-  const res = await fetch(`${baseUrl}/admin/events/${sentenceId}`, {
+  const res = await fetch(`${baseUrl}/admin/sentences/${sentenceId}`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${token}`,
