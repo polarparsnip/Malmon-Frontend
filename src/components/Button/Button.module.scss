@@ -1,0 +1,11 @@
+.button {
+   &__button {
+    padding: calc(var(--spacing)*0.2);
+    background: var(--tile-border);
+    border-radius: 6px;
+    }
+
+    &__button:hover, &__soloButton:hover {
+        cursor: pointer;
+    } 
+}

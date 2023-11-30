@@ -1,0 +1,13 @@
+.header {
+    background: var(--primary-glow);
+    color: white;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    padding: 1rem 1rem;
+    position: sticky;
+    align-items: center;
+    justify-items: center;
+    padding: 2rem 3rem;
+    font-family: var(--font-mono);
+}
