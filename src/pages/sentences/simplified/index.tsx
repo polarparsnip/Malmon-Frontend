@@ -78,8 +78,21 @@ export default function SimplifiedSentencesPage(
     checkLogin();
   }, [loginContext, router])
 
-  if (!simplifiedSentences) {
-    return <h1>Engin gögn fundust.</h1>;
+  if (!simplifiedSentences.ok) {
+    return (
+      <main className={styles.main}>
+        {loginContext.userLoggedIn.login ? (
+            <div className={styles.notFound}>
+              <h1>Engin gögn fundust.</h1>
+            </div>
+          ) : (
+            <div className={styles.notFound}>
+              <h1>Síða fannst ekki</h1>
+            </div>
+          )
+        }
+      </main> 
+    )
   }
 
   return (
@@ -126,8 +139,12 @@ export default function SimplifiedSentencesPage(
               </div>
             ) : null}
 
-          </>) : (<h1>Síða fannst ekki</h1>)
-        }
+          </>
+        ) : (
+          <div className={styles.notFound}>
+            <h1>Síða fannst ekki</h1>
+          </div>
+        )}
       </main>
     </>
   )

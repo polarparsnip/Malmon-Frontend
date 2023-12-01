@@ -119,8 +119,21 @@ export default function SentencesPage(
     checkLogin();
   }, [loginContext, router])
 
-  if (!sentences) {
-    return <h1>Engin gögn fundust.</h1>;
+  if (!sentences.sentences) {
+    return (
+      <main className={styles.main}>
+        {loginContext.userLoggedIn.login ? (
+            <div className={styles.notFound}>
+              <h1>Engin gögn fundust.</h1>
+            </div>
+          ) : (
+            <div className={styles.notFound}>
+              <h1>Síða fannst ekki</h1>
+            </div>
+          )
+        }
+      </main> 
+    )
   }
 
   return (
@@ -209,8 +222,12 @@ export default function SentencesPage(
                 </form>
               </div>
             ) : null }
-          </>) : (<h1>Síða fannst ekki</h1>)
-        }
+          </>
+        ) : (
+          <div className={styles.notFound}>
+            <h1>Síða fannst ekki</h1>
+          </div>
+        )}
       </main>
     </>
   )

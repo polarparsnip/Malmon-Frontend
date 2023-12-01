@@ -76,8 +76,21 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
     checkLogin();
   }, [loginContext, router])
 
-  if (!users) {
-    return <h1>Engin gögn fundust.</h1>;
+  if (!users.users) {
+    return (
+      <main className={styles.main}>
+        {loginContext.userLoggedIn.login ? (
+            <div className={styles.notFound}>
+              <h1>Engin gögn fundust.</h1>
+            </div>
+          ) : (
+            <div className={styles.notFound}>
+              <h1>Síða fannst ekki</h1>
+            </div>
+          )
+        }
+      </main> 
+    )
   }
 
   return (
@@ -120,8 +133,12 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
                 <Paging paging={users} query={query} page={'users'}></Paging>
               </div>
             ) : null}
-          </>) : (<h1>Síða fannst ekki</h1>)
-        }
+          </>
+        ) : (
+          <div className={styles.notFound}>
+            <h1>Síða fannst ekki</h1>
+          </div>
+        )}
       </main>
     </>
   )

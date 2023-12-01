@@ -12,20 +12,25 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const submitSentenceHandler = async (event: any, token: any, sentenceId: number, userId: number) => {
   event.preventDefault();
 
-  const formData = new FormData();
-  formData.append('simplifiedSentence', event.target.simplifiedSentence.value);
-  formData.append('sentenceId', String(sentenceId));
-  formData.append('userId', String(userId));
+  // const formData = new FormData();
+  // formData.append('simplifiedSentence', event.target.simplifiedSentence.value);
+  // formData.append('sentenceId', String(sentenceId));
+  // formData.append('userId', String(userId));
 
   const res = await fetch(`${baseUrl}/sentences/simplified`, {
     method: 'POST',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: formData,
+    body: JSON.stringify({ 
+      'simplifiedSentence': event.target.simplifiedSentence.value, 
+      'sentenceId': sentenceId 
+    }),
   });
 
-  if (!res) {
+  if (!res.ok) {
+    console.error('Error:', res.status, res.statusText);
     return res;
   }
 
@@ -41,7 +46,8 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
     body: updateData,
   });
 
-  if (!updateRes) {
+  if (!updateRes.ok) {
+    console.error('Error:', updateRes.status, updateRes.statusText);
     return updateRes;
   }
 
@@ -71,8 +77,6 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
 
-  console.log(sentence);
-
   useEffect(() => {
     const checkLogin = async () => {
       const {user} = loginContext.userLoggedIn;
@@ -85,8 +89,21 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
     checkLogin();
   }, [loginContext, router])
 
-  if (!sentence) {
-    return <h1>Engin gögn fundust.</h1>;
+  if (!sentence.sentence) {
+    return (
+      <main className={styles.main}>
+        {loginContext.userLoggedIn.login ? (
+            <div className={styles.notFound}>
+              <h1>Engin gögn fundust.</h1>
+            </div>
+          ) : (
+            <div className={styles.notFound}>
+              <h1>Síða fannst ekki</h1>
+            </div>
+          )
+        }
+      </main> 
+    )
   }
 
   return (
@@ -136,10 +153,13 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
                 </form>
               </div>
 
-            </div>
-                
-          </>) : (<h1>Síða fannst ekki</h1>)
-        }
+            </div>    
+          </>
+        ) : (
+          <div className={styles.notFound}>
+            <h1>Síða fannst ekki</h1>
+          </div>
+        )}
       </main>
     </>
   )
