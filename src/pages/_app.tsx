@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       {error ? (
         <div className={styles.loadingPage}>
-          <h1>404: Page not found</h1>
+          <h1>404: Síða fannst ekki</h1>
         </div>
       ) : (
         <>
