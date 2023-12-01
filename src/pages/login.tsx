@@ -1,5 +1,6 @@
 import { useUserContext } from '@/context';
 import styles from '@/styles/Home.module.css';
+import Cookies from 'js-cookie';
 import Head from 'next/head';
 import Link from 'next/link';
 import Router from 'next/router';
@@ -11,7 +12,7 @@ const loginHandler = async (event: any) => {
   event.preventDefault();
   const username = event.target.username.value;
   const password = event.target.password.value;
-  console.log(`${baseUrl}/users/login`)
+  // console.log(`${baseUrl}/users/login`)
   const res = await fetch(`${baseUrl}/users/login`, {
     method: 'POST',
     headers: {
@@ -27,6 +28,7 @@ const loginHandler = async (event: any) => {
 
   if (result.user !== undefined) {
     localStorage.setItem('token', result.token);
+    Cookies.set('token', result.token, { expires: 7 });
   }
 
   return result;
@@ -36,7 +38,7 @@ const loginHandler = async (event: any) => {
 export default function Login() {
   const loginContext = useUserContext();
   const [fail, setFail] = useState(false);
-  console.log("base", baseUrl)
+  // console.log('base', baseUrl)
 
   return (
       <>

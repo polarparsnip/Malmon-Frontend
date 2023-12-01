@@ -34,21 +34,33 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
     return res;
   }
 
-  const updateData = new FormData();
-
-  updateData.append('simplified', 'true');
-
-  const updateRes = await fetch(`${baseUrl}/sentences/${sentenceId}`, {
+  const updateRes = await fetch(`${baseUrl}/sentences/${userId}`, {
     method: 'PATCH',
     headers: {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: updateData,
   });
 
   if (!updateRes.ok) {
     console.error('Error:', updateRes.status, updateRes.statusText);
     return updateRes;
+  }
+
+  const updateUser = await fetch(`${baseUrl}/users/${userId}`, {
+    method: 'PATCH',
+    headers: {
+     'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ 
+      'completedSentences': '1'
+    }),
+  });
+
+  if (!updateUser.ok) {
+    console.error('Error:', updateUser.status, updateUser.statusText);
+    return updateUser;
   }
 
   const result = await res.json();

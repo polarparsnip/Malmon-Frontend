@@ -9,22 +9,33 @@ import { useEffect, useState } from 'react'
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const submitVerificationHandler = async (token: any, simplifiedSentenceId: number, userId: number) => {
-  
-  const formData = new FormData();
-
-  formData.append('verified', 'true');
 
   const res = await fetch(`${baseUrl}/sentences/simplified/${simplifiedSentenceId}`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    body: formData,
   });
 
   if (!res.ok) {
     console.error('Error:', res.status, res.statusText);
     return res;
+  }
+
+  const updateUser = await fetch(`${baseUrl}/users/${userId}`, {
+    method: 'PATCH',
+    headers: {
+     'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ 
+      'completedVerifications': '1'
+    }),
+  });
+
+  if (!updateUser.ok) {
+    console.error('Error:', updateUser.status, updateUser.statusText);
+    return updateUser;
   }
 
   const result = await res.json();
@@ -34,8 +45,8 @@ const submitVerificationHandler = async (token: any, simplifiedSentenceId: numbe
 
 export const getServerSideProps: GetServerSideProps = async () => {
 
-  const req = await fetch(`${baseUrl}/sentences/simplified/sentence`);
-  const simplifiedSentence = await req.json();
+  const reqq = await fetch(`${baseUrl}/sentences/simplified/sentence`);
+  const simplifiedSentence = await reqq.json();
 
   if (!simplifiedSentence) {
     return {

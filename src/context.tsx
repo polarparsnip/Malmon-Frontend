@@ -1,5 +1,6 @@
-import { jwtDecode } from "jwt-decode";
-import { createContext, useContext, useEffect, useState } from "react";
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 interface IUserContext {
     userLoggedIn: { login: boolean; user: { id: number, username: string, admin: boolean } };
@@ -17,22 +18,24 @@ export const UserContext = createContext<IUserContext>({
 
 
 export function AppWrapper({ children }: { children: React.ReactNode }) {
-    //const name = 'test';
+    // const name = 'test';
     const [userLoggedIn, setUserLoggedIn] = useState({
         login: false,
         user: { id: -1, username: '', admin: false },
     });
 
-    //const [login, setLogin] = useState({});
+    // const [login, setLogin] = useState({});
 
     const logOut = () => {
     setUserLoggedIn({ login: false, user: { id: -1, username: '', admin: false }});
-    //localStorage.setItem("user", JSON.stringify({ login: false, user: {}}));
+    // localStorage.setItem("user", JSON.stringify({ login: false, user: {}}));
     localStorage.clear();
+
+    Cookies.remove('token');
     }
 
     useEffect(() => {   
-        const storedUser = localStorage.getItem("user");
+        const storedUser = localStorage.getItem('user');
         if (storedUser) {
           setUserLoggedIn(JSON.parse(storedUser));
         }
@@ -61,7 +64,7 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
           const decodedToken: any = jwtDecode(token);
           const expirationTime = decodedToken.exp; // expiration time in milliseconds
           const currentTime = Date.now() / 1000;
-          //console.log(expirationTime - currentTime)
+          // console.log(expirationTime - currentTime)
           if (currentTime > expirationTime) {
             logOut(); // token expired, log out the user
           }
