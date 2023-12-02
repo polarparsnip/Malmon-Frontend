@@ -1,9 +1,10 @@
 import { Button } from '@/components/Button/Button'
-import Paging from '@/components/paging/Paging'
 import SentenceCard from '@/components/SentenceCard/SentenceCard'
+import Paging from '@/components/paging/Paging'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { Query, Sentence, Sentences } from '@/types'
+import Cookies from 'js-cookie'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -86,8 +87,13 @@ export const getServerSideProps: GetServerSideProps = async (
     lim = `limit=${query.limit}`;
   }
   
-  const req = await fetch(`${baseUrl}/sentences/?${off}&${lim}`);
-  const sentences = await req.json();
+  const res = await fetch(`${baseUrl}/admin/sentences/?${off}&${lim}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${context.req.cookies.token}`,
+    },
+  });
+  const sentences = await res.json();
 
   if (!sentences) {
     return {
@@ -112,8 +118,10 @@ export default function SentencesPage(
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        const localToken = localStorage.getItem('token');
-        if(localToken) setToken(localToken);
+        // const localToken = localStorage.getItem('token');
+        // if(localToken) setToken(localToken);
+        const cookieToken = Cookies.get('token');
+        if(cookieToken) setToken(cookieToken);
       }
     }
     checkLogin();
@@ -122,7 +130,7 @@ export default function SentencesPage(
   if (!sentences.sentences) {
     return (
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login ? (
+        {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
             <div className={styles.notFound}>
               <h1>Engin gögn fundust.</h1>
             </div>
@@ -146,7 +154,7 @@ export default function SentencesPage(
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
+        
           <>
             <div className={styles.cards}>
           
@@ -223,11 +231,7 @@ export default function SentencesPage(
               </div>
             ) : null }
           </>
-        ) : (
-          <div className={styles.notFound}>
-            <h1>Síða fannst ekki</h1>
-          </div>
-        )}
+
       </main>
     </>
   )

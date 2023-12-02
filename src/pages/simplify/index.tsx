@@ -2,7 +2,8 @@ import { Button } from '@/components/Button/Button'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { Sentence } from '@/types'
-import { GetServerSideProps } from 'next'
+import Cookies from 'js-cookie'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -17,7 +18,7 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
   // formData.append('sentenceId', String(sentenceId));
   // formData.append('userId', String(userId));
 
-  const res = await fetch(`${baseUrl}/sentences/simplified`, {
+  const res = await fetch(`${baseUrl}/users/sentences/simplified`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
     return res;
   }
 
-  const updateRes = await fetch(`${baseUrl}/sentences/${userId}`, {
+  const updateRes = await fetch(`${baseUrl}/users/sentences/${userId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -68,10 +69,17 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
   return result;
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
 
-  const req = await fetch(`${baseUrl}/sentences/sentence`);
-  const sentence = await req.json();
+  const res = await fetch(`${baseUrl}/users/sentences/sentence`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${context.req.cookies.token}`,
+    },
+  });
+  const sentence = await res.json();
 
   if (!sentence) {
     return {
@@ -94,8 +102,10 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        const localToken = localStorage.getItem('token');
-        if(localToken) setToken(localToken);
+        // const localToken = localStorage.getItem('token');
+        // if(localToken) setToken(localToken);
+        const cookieToken = Cookies.get('token');
+        if(cookieToken) setToken(cookieToken);
       }
     }
     checkLogin();
@@ -128,7 +138,7 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login ? (
+        
           <>
             <div className={styles.cards} >
 
@@ -167,11 +177,7 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
 
             </div>    
           </>
-        ) : (
-          <div className={styles.notFound}>
-            <h1>Síða fannst ekki</h1>
-          </div>
-        )}
+
       </main>
     </>
   )

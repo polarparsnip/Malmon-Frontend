@@ -1,9 +1,10 @@
 import { Button } from '@/components/Button/Button'
-import Paging from '@/components/paging/Paging'
 import SimplifiedSentenceCard from '@/components/SimplifiedSentenceCard/SimplifiedSentenceCard'
+import Paging from '@/components/paging/Paging'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { Query, SimplifiedSentence, SimplifiedSentences } from '@/types'
+import Cookies from 'js-cookie'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -45,8 +46,13 @@ export const getServerSideProps: GetServerSideProps = async (
     lim = `limit=${query.limit}`;
   }
   
-  const req = await fetch(`${baseUrl}/sentences/simplified/?${off}&${lim}`);
-  const simplifiedSentences = await req.json();
+  const res = await fetch(`${baseUrl}/admin/sentences/simplified/?${off}&${lim}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${context.req.cookies.token}`,
+    },
+  });
+  const simplifiedSentences = await res.json();
 
   if (!simplifiedSentences) {
     return {
@@ -71,17 +77,19 @@ export default function SimplifiedSentencesPage(
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        const localToken = localStorage.getItem('token');
-        if(localToken) setToken(localToken);
+        // const localToken = localStorage.getItem('token');
+        // if(localToken) setToken(localToken);
+        const cookieToken = Cookies.get('token');
+        if(cookieToken) setToken(cookieToken);
       }
     }
     checkLogin();
   }, [loginContext, router])
 
-  if (!simplifiedSentences.ok) {
+  if (!simplifiedSentences.simplifiedSentences) {
     return (
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login ? (
+        {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
             <div className={styles.notFound}>
               <h1>Engin gögn fundust.</h1>
             </div>
@@ -105,7 +113,7 @@ export default function SimplifiedSentencesPage(
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
+
           <>
             <div className={styles.cards}>
               
@@ -140,11 +148,7 @@ export default function SimplifiedSentencesPage(
             ) : null}
 
           </>
-        ) : (
-          <div className={styles.notFound}>
-            <h1>Síða fannst ekki</h1>
-          </div>
-        )}
+
       </main>
     </>
   )

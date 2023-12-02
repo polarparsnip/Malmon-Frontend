@@ -27,8 +27,8 @@ const loginHandler = async (event: any) => {
   const result = await res.json();
 
   if (result.user !== undefined) {
-    localStorage.setItem('token', result.token);
-    Cookies.set('token', result.token, { expires: 7 });
+    // localStorage.setItem('token', result.token);
+    Cookies.set('token', result.token, { expires: 3 });
   }
 
   return result;
@@ -59,10 +59,11 @@ export default function Login() {
                 const userInfo = await loginHandler(event);
                 if (userInfo.user !== undefined) {
                   loginContext.setUserLoggedIn({ login: true, user: userInfo.user });
-                  localStorage.setItem(
-                    'user',
-                    JSON.stringify({ login: true, user: userInfo.user })
-                  );
+                  Cookies.set('user', JSON.stringify({ login: true, user: userInfo.user }), { expires: 3 });
+                  // localStorage.setItem(
+                  //   'user',
+                  //   JSON.stringify({ login: true, user: userInfo.user })
+                  // );
                   setFail(false);
                   Router.push('/');
                 } else {

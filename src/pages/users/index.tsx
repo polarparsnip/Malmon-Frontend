@@ -4,10 +4,12 @@ import Paging from '@/components/paging/Paging'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { Query, User, Users } from '@/types'
+import Cookies from 'js-cookie'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -44,8 +46,13 @@ export const getServerSideProps: GetServerSideProps = async (
     lim = `limit=${query.limit}`;
   }
   
-  const req = await fetch(`${baseUrl}/users/?${off}&${lim}`);
-  const users = await req.json();
+  const res = await fetch(`${baseUrl}/users/?${off}&${lim}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${context.req.cookies.token}`,
+    },
+  });
+  const users = await res.json();
 
   if (!users) {
     return {
@@ -68,8 +75,10 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        const localToken = localStorage.getItem('token');
-        if(localToken) setToken(localToken);
+        // const localToken = localStorage.getItem('token');
+        // if(localToken) setToken(localToken);
+        const cookieToken = Cookies.get('token');
+        if(cookieToken) setToken(cookieToken);
       }
     }
 
@@ -103,7 +112,7 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
+
           <>
             <div className={styles.cards}>
             
@@ -134,11 +143,7 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
               </div>
             ) : null}
           </>
-        ) : (
-          <div className={styles.notFound}>
-            <h1>Síða fannst ekki</h1>
-          </div>
-        )}
+
       </main>
     </>
   )

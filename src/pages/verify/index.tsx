@@ -1,7 +1,8 @@
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { SimplifiedSentence } from '@/types'
-import { GetServerSideProps } from 'next'
+import Cookies from 'js-cookie'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -10,7 +11,7 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const submitVerificationHandler = async (token: any, simplifiedSentenceId: number, userId: number) => {
 
-  const res = await fetch(`${baseUrl}/sentences/simplified/${simplifiedSentenceId}`, {
+  const res = await fetch(`${baseUrl}/users/sentences/simplified/${simplifiedSentenceId}`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -43,10 +44,16 @@ const submitVerificationHandler = async (token: any, simplifiedSentenceId: numbe
   return result;
 };
 
-export const getServerSideProps: GetServerSideProps = async () => {
-
-  const reqq = await fetch(`${baseUrl}/sentences/simplified/sentence`);
-  const simplifiedSentence = await reqq.json();
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const res = await fetch(`${baseUrl}/users/sentences/simplified/sentence`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${context.req.cookies.token}`,
+    },
+  });
+  const simplifiedSentence = await res.json();
 
   if (!simplifiedSentence) {
     return {
@@ -69,8 +76,10 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        const localToken = localStorage.getItem('token');
-        if(localToken) setToken(localToken);
+        // const localToken = localStorage.getItem('token');
+        // if(localToken) setToken(localToken);
+        const cookieToken = Cookies.get('token');
+        if(cookieToken) setToken(cookieToken);
       }
     }
     checkLogin();
@@ -103,7 +112,7 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        {loginContext.userLoggedIn.login ? (
+
           <>
             <div className={styles.cards} >
               <h2>Upprunaleg setning:</h2>
@@ -133,11 +142,7 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
 
             </div>    
           </>
-        ) : (
-          <div className={styles.notFound}>
-            <h1>Síða fannst ekki</h1>
-          </div>
-        )}
+
       </main>
     </>
   )

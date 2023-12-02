@@ -29,13 +29,18 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
     const logOut = () => {
     setUserLoggedIn({ login: false, user: { id: -1, username: '', admin: false }});
     // localStorage.setItem("user", JSON.stringify({ login: false, user: {}}));
-    localStorage.clear();
+    // localStorage.clear();
 
     Cookies.remove('token');
+    Cookies.remove('user');
     }
 
     useEffect(() => {   
-        const storedUser = localStorage.getItem('user');
+        // const storedUser = localStorage.getItem('user');
+        const storedUser = Cookies.get('user');
+
+        console.log(storedUser)
+
         if (storedUser) {
           setUserLoggedIn(JSON.parse(storedUser));
         }
@@ -59,7 +64,8 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
     // }, [userLoggedIn]);
 
     const checkToken = async () => {
-        const token = localStorage.getItem('token');
+        // const token = localStorage.getItem('token');
+        const token = Cookies.get('token');
         if (token) {
           const decodedToken: any = jwtDecode(token);
           const expirationTime = decodedToken.exp; // expiration time in milliseconds

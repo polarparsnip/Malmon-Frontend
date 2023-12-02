@@ -45,8 +45,8 @@ export type User = {
     name: string;
     username: string;
     // admin: boolean;
-    completedSentences: number;
-    completedVerifications: number;
+    completedsentences: number;
+    completedverifications: number;
     created: string;
 };
 

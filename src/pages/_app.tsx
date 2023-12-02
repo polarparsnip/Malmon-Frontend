@@ -46,7 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <>
           {loading ? (
             <div className={styles.loadingPage}>
-              <h1>Loading...</h1>
+              <h1>Sæki gögn...</h1>
             </div>
           ) : (
             <AppWrapper>

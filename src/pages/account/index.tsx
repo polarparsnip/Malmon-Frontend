@@ -1,18 +1,20 @@
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { User } from '@/types'
-import { GetServerSideProps } from 'next'
+import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 
-export const getServerSideProps: GetServerSideProps = async ({req} ) => {
+export const getServerSideProps: GetServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
 
   const res = await fetch(`${baseUrl}/users/me`, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${req.cookies.token}`,
+      Authorization: `Bearer ${context.req.cookies.token}`,
     },
   });
   const userInfo = await res.json();
@@ -41,8 +43,9 @@ export default function UserAccountPage(
 
   //     if(user !== undefined){
   //       // const localToken = localStorage.getItem('token');
-  //       const localToken = Cookies.get('token');
-  //       if(localToken) setToken(localToken);
+  //       // if(localToken) setToken(localToken);
+  //       const cookieToken = Cookies.get('token');
+  //       if(cookieToken) setToken(cookieToken);
   //     }
   //   }
   //   checkLogin();
@@ -87,9 +90,9 @@ export default function UserAccountPage(
                 <br/>
                 <h3>Nafn: {userInfo.name}</h3>
                 <br/>
-                <p>Kláraðar setningar: {userInfo.completedSentences}</p>
+                <p>Kláraðar setningar: {userInfo.completedsentences}</p>
                 <br/>
-                <p>Yfirfarnar setningar: {userInfo.completedVerifications}</p>
+                <p>Yfirfarnar setningar: {userInfo.completedverifications}</p>
               </div>
 
             </div>    
