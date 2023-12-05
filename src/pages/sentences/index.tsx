@@ -154,10 +154,10 @@ export default function SentencesPage(
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        
-          <>
-            <div className={styles.cards}>
+
+        <div className={styles.cards}>
           
+          <div className={styles.adminSentences}>
               {sentences.sentences.map((value: Sentence) => (
                   <div className={styles.card} key={value.id} >
 
@@ -186,10 +186,8 @@ export default function SentencesPage(
                       </div>
                     ) : null}
 
-                    <br/>
-
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-                      <div><Button className={styles.soloButton} onClick={async () => {
+                      <div><Button onClick={async () => {
                         const deletedSentence = await adminDeleteSentenceHandler(token, value.id);
                         if (deletedSentence !== undefined) {
                           router.reload();
@@ -202,7 +200,7 @@ export default function SentencesPage(
                   </div>
                 ))}
             
-            </div>
+          </div>
 
             {!(sentences.sentences.length < 10 && (query.offset === 0 || query.offset === undefined)) ? (
               <div className='paging'>
@@ -230,8 +228,7 @@ export default function SentencesPage(
                 </form>
               </div>
             ) : null }
-          </>
-
+        </div>
       </main>
     </>
   )

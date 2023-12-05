@@ -111,9 +111,8 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
       </Head>
       <main className={styles.main}>
 
-          <>
-            <div className={styles.cards}>
-            
+          <div className={styles.cards}>
+            <div className={styles.userCards}>
               {users.users.map((value: User) => (
                   <div className={styles.card} key={value.id} >
 
@@ -142,7 +141,7 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
                 <Paging paging={users} query={query} page={'users'}></Paging>
               </div>
             ) : null}
-          </>
+          </div>
 
       </main>
     </>

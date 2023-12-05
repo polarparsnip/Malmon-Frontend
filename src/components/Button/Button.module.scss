@@ -12,5 +12,7 @@
 
     &__button:hover, &__soloButton:hover {
         cursor: pointer;
+        background: rgb(55 142 171);
+        color: rgba(255, 255, 255, 0.9);
     } 
 }

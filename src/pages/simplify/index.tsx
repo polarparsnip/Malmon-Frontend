@@ -161,7 +161,7 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
                     );
 
                     if (!submittedSentence.error) {
-                      router.reload();
+                      // router.reload();
                     } else {
                       console.error( {error: submittedSentence })
                     }

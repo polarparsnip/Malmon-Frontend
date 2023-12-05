@@ -75,7 +75,6 @@ export default function LeaderboardPage({ query, users }: { query: Query, users:
       </Head>
       <main className={styles.main}>
 
-        <>
           <div className={styles.cards}>
 
             <div className={styles.leaderboard}>
@@ -89,7 +88,6 @@ export default function LeaderboardPage({ query, users }: { query: Query, users:
 
             </div>
           </div>
-        </>
 
       </main>
     </>

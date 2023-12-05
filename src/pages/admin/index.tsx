@@ -16,13 +16,13 @@ export default function Home() {
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <div className={styles.container}>
-          <div>
-            <h2>Ritskoðun</h2>
-            <br/>
+          <div className={styles.adminEditor}>
+            <h1>Ritskoðun</h1>
+
             <h3><Link href='/sentences'>Setningar</Link></h3>
-            <br/>
+  
             <h3><Link href='/sentences/simplified'>Einfaldaðar Setningar</Link></h3>
-            <br/>
+
             <h3><Link href='/users'>Notendur</Link></h3>
           </div>
         </div>

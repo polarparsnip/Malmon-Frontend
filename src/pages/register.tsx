@@ -1,3 +1,4 @@
+import { Button } from '@/components/Button/Button';
 import styles from '@/styles/Home.module.css';
 import Head from 'next/head';
 import Router from 'next/router';
@@ -69,7 +70,7 @@ export default function Register() {
               <input type='password' id='password' />
               <br />
               {fail ? <p>Ógilt lykilorð/password</p> : <p></p>}
-              <button className={styles.soloButton} type='submit'>Nýskrá</button>
+              <Button type='submit'>Nýskrá</Button>
             </form>
 
           </div>

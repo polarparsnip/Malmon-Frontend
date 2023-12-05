@@ -77,8 +77,6 @@ export default function SimplifiedSentencesPage(
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        // const localToken = localStorage.getItem('token');
-        // if(localToken) setToken(localToken);
         const cookieToken = Cookies.get('token');
         if(cookieToken) setToken(cookieToken);
       }
@@ -114,15 +112,13 @@ export default function SimplifiedSentencesPage(
       </Head>
       <main className={styles.main}>
 
-          <>
-            <div className={styles.cards}>
-              
-              {simplifiedSentences.simplifiedSentences.map((value: SimplifiedSentence) => (
+   
+          <div className={styles.cards}>
+            <div className={styles.adminSentences}>
+                {simplifiedSentences.simplifiedSentences.map((value: SimplifiedSentence) => (
                   <div className={styles.card} key={value.id} >
 
                     <SentenceCard value={value.simplifiedsentence} ></SentenceCard>
-
-                    <br/>
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
                       <div><Button onClick={async () => {
@@ -140,14 +136,15 @@ export default function SimplifiedSentencesPage(
               
             </div>
 
-            {!(simplifiedSentences.simplifiedSentences.length < 10 
-            && (query.offset === 0 || query.offset === undefined)) ? (
-              <div className='paging'>
-                <Paging paging={simplifiedSentences} query={query} page={'sentences/simplified'}></Paging>
-              </div>
-            ) : null}
-
-          </>
+              {!(simplifiedSentences.simplifiedSentences.length < 10 
+              && (query.offset === 0 || query.offset === undefined)) ? (
+                <div className='paging'>
+                  <Paging paging={simplifiedSentences} query={query} page={'sentences/simplified'}></Paging>
+                </div>
+              ) : null}
+            
+          </div>
+      
 
       </main>
     </>

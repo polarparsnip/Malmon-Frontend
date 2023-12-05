@@ -1,12 +1,16 @@
 .card {
     
     &__cardContent {
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: -4px 4px 8px rgba(0, 0, 0, 0.2); 
+        color: black;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-items: center;
         text-align: center;
-        gap: calc(var(--spacing)*0.2);
+        gap: 1rem;
+        padding: 1rem;
     }
 
     &__cardImage {

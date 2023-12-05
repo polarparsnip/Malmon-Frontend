@@ -1,3 +1,4 @@
+import { Button } from '@/components/Button/Button';
 import { useUserContext } from '@/context';
 import styles from '@/styles/Home.module.css';
 import Cookies from 'js-cookie';
@@ -84,7 +85,7 @@ export default function Login() {
               <input type='password' id='password' />
               <br />
               {fail ? <p>Ógilt lykilorð/password</p> : <p></p>}
-              <button className={styles.soloButton} type='submit'>Innskrá</button>
+              <Button type='submit'>Innskrá</Button>
             </form>
 
             <Link href='/register'>Nýskráning</Link>
