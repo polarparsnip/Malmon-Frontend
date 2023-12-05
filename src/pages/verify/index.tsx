@@ -73,6 +73,18 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
 
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(prevProgress => prevProgress + 11);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   useEffect(() => {
     const checkLogin = async () => {
       const {user} = loginContext.userLoggedIn;
@@ -127,19 +139,26 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
               <br/>
 
               <div className={styles.submitVerification}>
-
-                <Button onClick={async () => {
-                      const submittedVerification = await submitVerificationHandler(
-                        token, 
-                        simplifiedSentence.id, 
-                        loginContext.userLoggedIn.user.id
-                      );
-                      if (submittedVerification !== undefined) {
-                        router.reload();
-                      } else {
-                        console.error( {error: submittedVerification })
-                      }
-                }}>Staðfesta setningu</Button>
+              {progress < 100 ? (
+                <div className={styles.progressBarContainer}>
+                  <div className={styles.progressBar} style={{ width: `${progress}%` }} />
+                </div>
+              ) : (
+                <div className={styles.verifyButton}>
+                  <Button onClick={async () => {
+                        const submittedVerification = await submitVerificationHandler(
+                          token, 
+                          simplifiedSentence.id, 
+                          loginContext.userLoggedIn.user.id
+                        );
+                        if (submittedVerification !== undefined) {
+                          router.reload();
+                        } else {
+                          console.error( {error: submittedVerification })
+                        }
+                  }}>Staðfesta setningu</Button>
+                </div>
+                )}
 
               </div>
 
