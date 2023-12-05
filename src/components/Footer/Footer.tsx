@@ -1,6 +1,7 @@
-import { useUserContext } from "@/context";
-import Link from "next/link"
-import s from "./Footer.module.scss"
+import { useUserContext } from '@/context';
+import Link from 'next/link';
+import { Button } from '../Button/Button';
+import s from './Footer.module.scss';
 
 
 export default function Footer() {
@@ -16,7 +17,7 @@ export default function Footer() {
         </div>
       )}
       {loginContext.userLoggedIn.login ? (
-        <button className={s.footer__soloButton} onClick={loginContext.logOut}>Útskrá</button>) : (<div></div>
+        <Button onClick={loginContext.logOut}>Útskrá</Button>) : (<div></div>
       )}
     </footer>
   )

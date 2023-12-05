@@ -1,7 +1,7 @@
-import s from "./Button.module.scss"
+import s from './Button.module.scss'
 
-export function Button({ children }: any) {
+export function Button({ children, onClick, type }: { children: any, onClick?: any, type?: any}) {
   return (
-    <button className={s.button__button}>{children}</button>
+    <button className={s.button__button} onClick={onClick} type={type}>{children}</button>
   )
 }

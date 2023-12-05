@@ -1,4 +1,5 @@
 import { Button } from '@/components/Button/Button'
+import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { Sentence } from '@/types'
@@ -35,7 +36,7 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
     return res;
   }
 
-  const updateRes = await fetch(`${baseUrl}/users/sentences/${userId}`, {
+  const updateRes = await fetch(`${baseUrl}/users/sentences/${sentenceId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -142,13 +143,12 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
           <>
             <div className={styles.cards} >
 
-              <h3>{sentence.sentence}</h3>
+              {/* <h3>{sentence.sentence}</h3> */}
+              <SentenceCard value={sentence.sentence} />
 
               <br/>
 
               <div className={styles.submitSentenceForm}>
-                <p>Einfölduð setning:</p>
-
                 <form className={styles.form}
                   onSubmit={async (event) => {
                     event.preventDefault();
@@ -167,10 +167,10 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
                     }
                   }}
                 >
-                  <label htmlFor='simplifiedSentence'></label>
-                  <br />
+                  <label htmlFor='simplifiedSentence'>Einfalda:</label>
+
                   <input type='text' id='simplifiedSentence' />
-                  <br />
+
                   <Button type='submit'>Senda inn</Button>
                 </form>
               </div>

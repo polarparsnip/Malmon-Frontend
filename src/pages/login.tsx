@@ -65,7 +65,11 @@ export default function Login() {
                   //   JSON.stringify({ login: true, user: userInfo.user })
                   // );
                   setFail(false);
-                  Router.push('/');
+                  if(userInfo.user.admin) {
+                    Router.push('/admin');
+                  } else {
+                    Router.push('/');
+                  }
                 } else {
                   setFail(true);
                 }

@@ -1,3 +1,5 @@
+import { Button } from '@/components/Button/Button'
+import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
 import { SimplifiedSentence } from '@/types'
@@ -114,18 +116,19 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
       <main className={styles.main}>
 
           <>
-            <div className={styles.cards} >
+            <div className={styles.verify} >
               <h2>Upprunaleg setning:</h2>
-              <h3>{simplifiedSentence.originalsentence}</h3>
-              <br/>
+              <SentenceCard value={simplifiedSentence.originalsentence} />
+   
               <h2>Einfölduð setning:</h2>
-              <h3>{simplifiedSentence.simplifiedsentence}</h3>
+              <SentenceCard value={simplifiedSentence.simplifiedsentence} />
+  
 
               <br/>
 
               <div className={styles.submitVerification}>
 
-                <button className={styles.soloButton} onClick={async () => {
+                <Button onClick={async () => {
                       const submittedVerification = await submitVerificationHandler(
                         token, 
                         simplifiedSentence.id, 
@@ -136,7 +139,7 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
                       } else {
                         console.error( {error: submittedVerification })
                       }
-                }}>Staðfesta setningu</button>
+                }}>Staðfesta setningu</Button>
 
               </div>
 

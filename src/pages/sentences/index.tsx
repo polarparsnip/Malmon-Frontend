@@ -161,7 +161,7 @@ export default function SentencesPage(
               {sentences.sentences.map((value: Sentence) => (
                   <div className={styles.card} key={value.id} >
 
-                    <SentenceCard value={value} ></SentenceCard>
+                    <SentenceCard value={value.sentence} ></SentenceCard>
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
                       <div className={styles.patchForm}>

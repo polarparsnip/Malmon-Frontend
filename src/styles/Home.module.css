@@ -5,6 +5,7 @@
   align-items: center;
   padding: 6rem;
   min-height: 100vh;
+  background: rgb(55 142 171);
 
   /* font-family: var(--font-mono); */
 }
@@ -29,6 +30,47 @@
   flex: 1;
   margin-bottom: 10%;
 }
+
+.verify {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.submitSentenceForm {
+  margin-top: 2rem;
+}
+
+.submitSentenceForm .form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5rem;
+  gap: 1rem;
+  font-weight: bold;
+}
+
+.submitSentenceForm .form input {
+  font-size: 1.5rem;
+  padding: 0.5rem;
+  width: 100%;
+  border: 2px solid #000;
+}
+
+.submitSentenceForm .form input:focus {
+  outline: none;
+}
+
+.downloadContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  font-weight: bold;
+}
+
+
 
 .card {
   display: flex;
@@ -77,13 +119,7 @@
   width: var(--max-width);
 }
 
-.card {
-  padding: 1rem 1.2rem;
-  border-radius: var(--border-radius);
-  background: rgb(var(--card-rgb) 0);
-  border: 1px solid rgb(var(--card-border-rgb) 0);
-  transition: background 200ms, border 200ms;
-}
+
 
 .card span {
   display: inline-block;

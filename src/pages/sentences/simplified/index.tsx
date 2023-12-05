@@ -1,5 +1,5 @@
 import { Button } from '@/components/Button/Button'
-import SimplifiedSentenceCard from '@/components/SimplifiedSentenceCard/SimplifiedSentenceCard'
+import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import Paging from '@/components/paging/Paging'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
@@ -120,12 +120,12 @@ export default function SimplifiedSentencesPage(
               {simplifiedSentences.simplifiedSentences.map((value: SimplifiedSentence) => (
                   <div className={styles.card} key={value.id} >
 
-                    <SimplifiedSentenceCard value={value} ></SimplifiedSentenceCard>
+                    <SentenceCard value={value.simplifiedsentence} ></SentenceCard>
 
                     <br/>
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-                      <div><Button className={styles.soloButton} onClick={async () => {
+                      <div><Button onClick={async () => {
                         const deletedSentence = await adminDeleteSimplifiedSentenceHandler(token, value.id);
                         if (deletedSentence !== undefined) {
                           router.reload();
