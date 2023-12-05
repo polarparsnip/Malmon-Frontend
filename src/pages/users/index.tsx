@@ -75,8 +75,6 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        // const localToken = localStorage.getItem('token');
-        // if(localToken) setToken(localToken);
         const cookieToken = Cookies.get('token');
         if(cookieToken) setToken(cookieToken);
       }
@@ -122,15 +120,17 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
                     <UserCard value={value} ></UserCard>
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-                      <Button className={styles.soloButton} onClick={async () => {
+                      <Button onClick={async () => {
                         const deletedSentence = await adminDeleteUserHandler(token, value.id);
                         if (deletedSentence !== undefined) {
                           router.reload();
                         } else {
                           console.error( {error: deletedSentence})
                         }
-                      }}>Eyða Notanda</Button>) : null
-                    }
+                      }}>Eyða Notanda</Button>
+                      ) : (
+                        null
+                    )}
 
                   </div>
                 ))}

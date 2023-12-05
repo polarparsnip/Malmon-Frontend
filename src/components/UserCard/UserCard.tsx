@@ -8,8 +8,8 @@ export default function UserCard(
       <div className={s.card__cardContent}>
         <h2>{value.username}</h2>
         <h3>{value.name}</h3>
-        <p>{value.completedSentences}</p>
-        <p>{value.completedVerifications}</p>
+        <p>{value.completedsentences}</p>
+        <p>{value.completedverifications}</p>
         <p>Notandi búinn til þann: {value.created}</p>
       </div>
     )
