@@ -87,6 +87,8 @@ export const getServerSideProps: GetServerSideProps = async (
   } catch(e) {
     console.error('error', e);
   }
+
+  console.log(simplifiedSentences)
   
 
   if (!simplifiedSentences) {

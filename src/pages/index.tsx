@@ -47,19 +47,18 @@ export default function Home() {
               ef að þér finnst hún ekki nógu góð útgáfa af upprunalegu setningunni.
             </p>
             <p>Inn í <Link href='/account'>&quot;Aðgangur&quot;</Link> í valmyndinni er svo hægt að sjá 
-            upplýsingarnar þínar, eins og 
-              fjölda innsendra einfaldaðra setninga og fjölda yfirfarða setninga.
+            upplýsingarnar þínar, eins og fjölda innsendra einfaldaðra setninga og fjölda yfirfarða 
+            setninga. Það birtist líka gæludýr sem þróast með árangri þínum.
             </p>
             <p>Svo ef smellt er á <Link href='/account'>&quot;Stigatafla&quot;</Link> í valmyndinni er 
-            hægt að skoða hverjir hafa lagt 
-              mest af mörkum og sent inn mest af setningum og klárað sem flestar yfirferðir.
+            hægt að skoða hverjir hafa lagt mest af mörkum og sent inn mest af setningum og klárað sem 
+            flestar yfirferðir.
             </p>
             <p>Ef þú ert ekki með notanda aðgang er einfalt að búa einn til. Smelltu annaðhvort 
             á <Link href='/register'>&quot;Nýskráning&quot;</Link> á innskráningarsíðunni eða fyrir neðan í 
             fótnum. Þar þarf svo einfaldlega
             bara að gefa upp nafn og notandanafn ásamt lykilorð. Eftir það er svo hægt 
-            að <Link href='/login'>skrá sig inn</Link> 
-            og taka þátt.
+            að <Link href='/login'>skrá sig inn</Link> og taka þátt.
             </p>
           </div>
         </div>
