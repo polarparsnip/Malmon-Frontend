@@ -13,7 +13,6 @@ const loginHandler = async (event: any) => {
   event.preventDefault();
   const username = event.target.username.value;
   const password = event.target.password.value;
-  // console.log(`${baseUrl}/users/login`)
   const res = await fetch(`${baseUrl}/users/login`, {
     method: 'POST',
     headers: {
@@ -28,18 +27,15 @@ const loginHandler = async (event: any) => {
   const result = await res.json();
 
   if (result.user !== undefined) {
-    // localStorage.setItem('token', result.token);
-    Cookies.set('token', result.token, { expires: 3 });
+    Cookies.set('token', result.token, { expires: 5 });
   }
 
   return result;
 };
 
-
 export default function Login() {
   const loginContext = useUserContext();
   const [fail, setFail] = useState(false);
-  // console.log('base', baseUrl)
 
   return (
       <>
@@ -61,10 +57,6 @@ export default function Login() {
                 if (userInfo.user !== undefined) {
                   loginContext.setUserLoggedIn({ login: true, user: userInfo.user });
                   Cookies.set('user', JSON.stringify({ login: true, user: userInfo.user }), { expires: 3 });
-                  // localStorage.setItem(
-                  //   'user',
-                  //   JSON.stringify({ login: true, user: userInfo.user })
-                  // );
                   setFail(false);
                   if(userInfo.user.admin) {
                     Router.push('/admin');

@@ -14,7 +14,7 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
 const submitVerificationHandler = async (token: any, simplifiedSentenceId: number, userId: number) => {
 
-  const res = await fetch(`${baseUrl}/users/sentences/simplified/${simplifiedSentenceId}`, {
+  const res = await fetch(`${baseUrl}/users/sentences/simplified/${simplifiedSentenceId}/verify`, {
     method: 'PATCH',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -47,16 +47,47 @@ const submitVerificationHandler = async (token: any, simplifiedSentenceId: numbe
   return result;
 };
 
+const submitRejectionHandler = async (token: any, simplifiedSentenceId: number) => {
+
+  const res = await fetch(`${baseUrl}/users/sentences/simplified/${simplifiedSentenceId}/reject`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    return res;
+  }
+
+  const result = await res.json();
+
+  return result;
+};
+
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
-  const res = await fetch(`${baseUrl}/users/sentences/simplified/sentence`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.token}`,
-    },
-  });
-  const simplifiedSentence = await res.json();
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/users/sentences/simplified/sentence`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${context.req.cookies.token}`,
+      },
+    });
+  } catch(e) {
+    console.error('error', e);
+  }
+
+  let simplifiedSentence;
+    
+  try {
+    simplifiedSentence = await res?.json();
+  } catch(e) {
+    console.error('error', e);
+  }
 
   if (!simplifiedSentence) {
     return {
@@ -91,14 +122,31 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        // const localToken = localStorage.getItem('token');
-        // if(localToken) setToken(localToken);
         const cookieToken = Cookies.get('token');
         if(cookieToken) setToken(cookieToken);
       }
     }
     checkLogin();
   }, [loginContext, router])
+
+  if (!simplifiedSentence) {
+    return (
+      <>
+        <Head>
+          <title>Staðfesta Setningar</title>
+          <meta name="description" content="Setningarsöfnun" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8"></meta>
+          <link rel="icon" href="/mlogo.png" />
+        </Head>
+        <main className={styles.main}>
+          <div className={styles.notFound}>
+            <h1>Ekki tókst að sækja gögn</h1>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   if (!simplifiedSentence.simplifiedsentence) {
     return (
@@ -120,7 +168,7 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
   return (
     <>
       <Head>
-        <title>Staðfesta setningar</title>
+        <title>Staðfesta Setningar</title>
         <meta name="description" content="Setningarsöfnun" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="utf-8"></meta>
@@ -159,15 +207,14 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
                     }}>Staðfesta setningu</Button>
 
                     <Button onClick={async () => {
-                          const submittedVerification = await submitVerificationHandler(
+                          const submittedRejection = await submitRejectionHandler(
                             token, 
-                            simplifiedSentence.id, 
-                            loginContext.userLoggedIn.user.id
+                            simplifiedSentence.id
                           );
-                          if (submittedVerification !== undefined) {
+                          if (submittedRejection !== undefined) {
                             router.reload();
                           } else {
-                            console.error( {error: submittedVerification })
+                            console.error( {error: submittedRejection })
                           }
                     }}>Hafna setningu</Button>
                   </div>

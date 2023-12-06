@@ -24,14 +24,27 @@ export const getServerSideProps: GetServerSideProps = async (
   if(query.limit) {
     lim = `limit=${query.limit}`;
   }
+
+  let res;
   
-  const res = await fetch(`${baseUrl}/users/?order=leaderboard&${off}&${lim}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.token}`,
-    },
-  });
-  const users = await res.json();
+  try {
+    res = await fetch(`${baseUrl}/users/?order=leaderboard&${off}&${lim}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${context.req.cookies.token}`,
+      },
+    });
+  } catch(e) {
+    console.error('error', e);
+  }
+
+  let users;
+
+  try {
+    users = await res?.json();
+  } catch(e) {
+    console.error('error', e);
+  }
 
   if (!users) {
     return {
@@ -46,6 +59,25 @@ export const getServerSideProps: GetServerSideProps = async (
 
 export default function LeaderboardPage({ query, users }: { query: Query, users: Users }) {
   const loginContext = useUserContext();
+
+  if (!users) {
+    return (
+      <>
+        <Head>
+          <title>Stigatafla</title>
+          <meta name="description" content="Setningarsöfnun" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8"></meta>
+          <link rel="icon" href="/mlogo.png" />
+        </Head>
+        <main className={styles.main}>
+          <div className={styles.notFound}>
+            <h1>Ekki tókst að sækja gögn</h1>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   if (!users.users) {
     return (

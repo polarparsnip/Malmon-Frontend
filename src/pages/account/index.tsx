@@ -12,14 +12,25 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/users/me`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${context.req.cookies.token}`,
+      },
+    });
+  } catch(e) {
+    console.error('error', e);
+  }
 
-  const res = await fetch(`${baseUrl}/users/me`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.token}`,
-    },
-  });
-  const userInfo = await res.json();
+  let userInfo;
+
+  try {
+    userInfo = await res?.json();
+  } catch(e) {
+    console.error('error', e);
+  }
 
   if (!userInfo) {
     return {
@@ -54,6 +65,25 @@ export default function UserAccountPage(
   // }, [loginContext, router])
 
   // console.log(loginContext.userLoggedIn)
+
+  if (!userInfo) {
+    return (
+      <>
+        <Head>
+          <title>Aðgangur</title>
+          <meta name="description" content="Setningarsöfnun" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8"></meta>
+          <link rel="icon" href="/mlogo.png" />
+        </Head>
+        <main className={styles.main}>
+          <div className={styles.notFound}>
+            <h1>Ekki tókst að sækja gögn</h1>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   if (!userInfo.username) {
     return (

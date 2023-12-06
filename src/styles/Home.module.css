@@ -160,6 +160,11 @@
   gap: 3rem;
 }
 
+.adminSimplifiedButtons {
+  display: flex;
+  gap: 1rem;
+}
+
 .postForm {
   display: flex;
   flex-direction: column;
@@ -175,7 +180,7 @@
   place-items: center center;
   justify-content: center;
   text-align: center;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 /* .description {

@@ -74,14 +74,26 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
 ) => {
+  let res;
 
-  const res = await fetch(`${baseUrl}/users/sentences/sentence`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.token}`,
-    },
-  });
-  const sentence = await res.json();
+  try {
+    res = await fetch(`${baseUrl}/users/sentences/sentence`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${context.req.cookies.token}`,
+      },
+    });
+  } catch(e) {
+    console.error('error', e);
+  }
+
+  let sentence;
+
+  try {
+    sentence = await res?.json();
+  } catch(e) {
+    console.error('error', e);
+  }
 
   if (!sentence) {
     return {
@@ -110,6 +122,25 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
     }
     checkLogin();
   }, [loginContext, router])
+
+  if (!sentence) {
+    return (
+      <>
+        <Head>
+          <title>Einfalda Setningar</title>
+          <meta name="description" content="Setningarsöfnun" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8"></meta>
+          <link rel="icon" href="/mlogo.png" />
+        </Head>
+        <main className={styles.main}>
+          <div className={styles.notFound}>
+            <h1>Ekki tókst að sækja gögn</h1>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   if (!sentence.sentence) {
     return (

@@ -31,6 +31,7 @@ export type SimplifiedSentence = {
     simplifiedsentence: string;
     originalsentence: string;
     userid: number;
+    rejected: boolean;
     verified: boolean;
     created: string;
 }

@@ -86,14 +86,27 @@ export const getServerSideProps: GetServerSideProps = async (
   if(query.limit) {
     lim = `limit=${query.limit}`;
   }
-  
-  const res = await fetch(`${baseUrl}/admin/sentences/?${off}&${lim}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.token}`,
-    },
-  });
-  const sentences = await res.json();
+
+  let res;
+
+  try {
+    res = await fetch(`${baseUrl}/admin/sentences/?${off}&${lim}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${context.req.cookies.token}`,
+      },
+    });
+  } catch(e) {
+    console.error('error', e);
+  }
+
+  let sentences;
+
+  try {
+    sentences = await res?.json();
+  } catch(e) {
+    console.error('error', e);
+  }
 
   if (!sentences) {
     return {
@@ -118,14 +131,31 @@ export default function SentencesPage(
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        // const localToken = localStorage.getItem('token');
-        // if(localToken) setToken(localToken);
         const cookieToken = Cookies.get('token');
         if(cookieToken) setToken(cookieToken);
       }
     }
     checkLogin();
   }, [loginContext, router])
+
+  if (!sentences) {
+    return (
+      <>
+        <Head>
+          <title>Setningar</title>
+          <meta name="description" content="Setningarsöfnun" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta charSet="utf-8"></meta>
+          <link rel="icon" href="/mlogo.png" />
+        </Head>
+        <main className={styles.main}>
+          <div className={styles.notFound}>
+            <h1>Ekki tókst að sækja gögn</h1>
+          </div>
+        </main>
+      </>
+    )
+  }
 
   if (!sentences.sentences) {
     return (
@@ -165,6 +195,9 @@ export default function SentencesPage(
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
                       <div className={styles.patchForm}>
+                        {value.simplified ? (<p>Hefur verið einfölduð</p>
+                        ) : (<p>Hefur ekki verið einfölduð</p>)}
+
 
                         <form className={styles.form}
                             onSubmit={async (event) => {
