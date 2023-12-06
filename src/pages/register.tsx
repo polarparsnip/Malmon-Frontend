@@ -58,17 +58,17 @@ export default function Register() {
               }}
             >
               <label htmlFor='username'>Notendanafn:</label>
-              <br />
-              <input type='text' id='username' />
-              <br />
+
+              <input type='text' id='username' required/>
+
               <label htmlFor='username'>Nafn:</label>
-              <br />
-              <input type='text' id='name' />
-              <br />
+
+              <input type='text' id='name' required/>
+
               <label htmlFor='password'>Lykilorð:</label>
-              <br />
-              <input type='password' id='password' />
-              <br />
+
+              <input type='password' id='password' required/>
+              
               {fail ? <p>Ógilt lykilorð/password</p> : <p></p>}
               <Button type='submit'>Nýskrá</Button>
             </form>

@@ -26,6 +26,14 @@ const adminRegisterSentenceHandler = async (event: any, token: any) => {
     body: formData,
   });
 
+  if (!res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    
+    throw new Error(message || 'Unknown error');
+  }
+
   const result = await res.json();
 
   return result;
@@ -125,6 +133,7 @@ export default function SentencesPage(
   const router = useRouter();
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -212,7 +221,7 @@ export default function SentencesPage(
                         >
                           <label htmlFor='patchSentence'></label>
                           <br />
-                          <input type='text' id='patchSentence' />
+                          <input type='text' id='patchSentence' required/>
                           <br />
                           <Button type='submit'>Uppfæra Setningu</Button>
                         </form>
@@ -247,15 +256,20 @@ export default function SentencesPage(
                 <form className={styles.form}
                   onSubmit={async (event) => {
                     event.preventDefault();
-                    const registerSentence = await adminRegisterSentenceHandler(event, token);
-                    if (registerSentence.name !== undefined) {
+                    try {
+                      await adminRegisterSentenceHandler(event, token);
                       router.reload();
+                    } catch(e: any) {
+                      setError(e.message);
                     }
+
                   }}
                 >
+                  {error && <p>{error}</p>}
+
                   <label htmlFor='sentence'>Setning:</label>
                   <br />
-                  <input type='text' id='sentence' />
+                  <input type='text' id='sentence' required/>
                   <br />
                   <Button type='submit'>Skrá setningu</Button>
                 </form>

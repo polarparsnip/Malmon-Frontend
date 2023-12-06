@@ -24,22 +24,22 @@ export default function Header() {
       <div className={s.header__navigation}>
         {loginContext.userLoggedIn.login ? (
           <>
-            <p><Link href='/download'>Sækja gögn</Link></p>
+            <p><Link href='/download'>Gögn</Link></p>
             <p><Link href='/leaderboard'>Stigatafla</Link></p>
             <p><Link href='/simplify'>Einfalda</Link></p>
             <p><Link href='/verify'>Yfirferð</Link></p>
             {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-              <p><Link href='/admin'>Admin svæði</Link></p>
+              <p><Link href='/admin'>Admin</Link></p>
             ) : (
               <>
-              <p><Link href='/account'>Minn Aðgangur</Link></p>
+              <p><Link href='/account'>Aðgangur</Link></p>
               </>
             )}
 
           </>
         ) : (
           <>
-            <p><Link href='/download'>Sækja gögn</Link></p>
+            <p><Link href='/download'>Gögn</Link></p>
             <p><Link href='/login'>Innskráning</Link></p>
           </>
         )}

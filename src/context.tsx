@@ -41,6 +41,31 @@ export function AppWrapper({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
+    const checkTokenExpiration = async () => {
+      const token = Cookies.get('token');
+      if (token) {
+        let tokenData;
+
+        try {
+          const tokenPayload = atob(token.split('.')[1]);
+          tokenData = JSON.parse(tokenPayload);
+
+          const currentTime = Math.floor(Date.now() / 1000);
+
+          if (tokenData.exp && tokenData.exp < currentTime) {
+            logOut();
+          }
+
+        } catch (error) {
+            console.error('Error parsing token:', error);
+        }
+      }
+  };
+
+  useEffect(() => {
+    checkTokenExpiration();
+  });
+
     return (
         <UserContext.Provider value={{ logOut, userLoggedIn, setUserLoggedIn }}>
         { children }

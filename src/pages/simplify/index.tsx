@@ -34,8 +34,13 @@ const submitSentenceHandler = async (event: any, token: any, sentenceId: number,
 
   if (!res.ok) {
     console.error('Error:', res.status, res.statusText);
-    return res;
+    const message = await res.json();
+    console.error(message)
+    
+    throw new Error(message || 'Unknown error');
   }
+
+  
 
   const updateRes = await fetch(`${baseUrl}/users/sentences/${sentenceId}`, {
     method: 'PATCH',
@@ -110,6 +115,7 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
   const router = useRouter();
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -179,23 +185,27 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
                   onSubmit={async (event) => {
                     event.preventDefault();
 
-                    const submittedSentence = await submitSentenceHandler(
-                      event, 
-                      token, 
-                      sentence.id, 
-                      loginContext.userLoggedIn.user.id
+                    try {
+                      await submitSentenceHandler(
+                        event, 
+                        token, 
+                        sentence.id, 
+                        loginContext.userLoggedIn.user.id
                     );
 
-                    if (!submittedSentence.error) {
-                      // router.reload();
-                    } else {
-                      console.error( {error: submittedSentence })
+                    router.reload();
+
+                    } catch(e: any) {
+                      setError(e.message);
                     }
+
                   }}
                 >
+                  {error && <p>{error}</p>}
+
                   <label htmlFor='simplifiedSentence'>Einfalda:</label>
 
-                  <input type='text' id='simplifiedSentence' />
+                  <input type='text' id='simplifiedSentence' required/>
 
                   <Button type='submit'>Senda inn</Button>
                 </form>
