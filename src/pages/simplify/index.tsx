@@ -1,4 +1,5 @@
 import { Button } from '@/components/Button/Button'
+import Captcha from '@/components/Captcha/Captcha'
 import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
@@ -103,8 +104,6 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
       const {user} = loginContext.userLoggedIn;
 
       if(user !== undefined){
-        // const localToken = localStorage.getItem('token');
-        // if(localToken) setToken(localToken);
         const cookieToken = Cookies.get('token');
         if(cookieToken) setToken(cookieToken);
       }
@@ -136,18 +135,14 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
         <meta name="description" content="Setningarsöfnun" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="utf-8"></meta>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
         
-          <>
-            <div className={styles.cards} >
+          <div className={styles.cards} >
 
-              {/* <h3>{sentence.sentence}</h3> */}
-              <SentenceCard value={sentence.sentence} />
-
-              <br/>
-
+            <SentenceCard value={sentence.sentence} />
+            <Captcha>
               <div className={styles.submitSentenceForm}>
                 <form className={styles.form}
                   onSubmit={async (event) => {
@@ -175,8 +170,10 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
                 </form>
               </div>
 
-            </div>    
-          </>
+            </Captcha>
+
+          </div>    
+
 
       </main>
     </>

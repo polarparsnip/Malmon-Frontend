@@ -1,4 +1,5 @@
 import { Button } from '@/components/Button/Button'
+import Captcha from '@/components/Captcha/Captcha'
 import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
@@ -77,7 +78,7 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setProgress(prevProgress => prevProgress + 11);
+      setProgress(prevProgress => prevProgress + 19);
     }, 1000);
 
     return () => {
@@ -123,7 +124,7 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
         <meta name="description" content="Setningarsöfnun" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="utf-8"></meta>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
 
@@ -135,32 +136,46 @@ export default function VerifyPage( { simplifiedSentence }: { simplifiedSentence
               <h2>Einfölduð setning:</h2>
               <SentenceCard value={simplifiedSentence.simplifiedsentence} />
   
+              <Captcha>
 
-              <br/>
+                <div className={styles.submitVerification}>
+                {progress < 100 ? (
+                  <div className={styles.progressBarContainer}>
+                    <div className={styles.progressBar} style={{ width: `${progress}%` }} />
+                  </div>
+                ) : (
+                  <div className={styles.verifyButton}>
+                    <Button onClick={async () => {
+                          const submittedVerification = await submitVerificationHandler(
+                            token, 
+                            simplifiedSentence.id, 
+                            loginContext.userLoggedIn.user.id
+                          );
+                          if (submittedVerification !== undefined) {
+                            router.reload();
+                          } else {
+                            console.error( {error: submittedVerification })
+                          }
+                    }}>Staðfesta setningu</Button>
 
-              <div className={styles.submitVerification}>
-              {progress < 100 ? (
-                <div className={styles.progressBarContainer}>
-                  <div className={styles.progressBar} style={{ width: `${progress}%` }} />
+                    <Button onClick={async () => {
+                          const submittedVerification = await submitVerificationHandler(
+                            token, 
+                            simplifiedSentence.id, 
+                            loginContext.userLoggedIn.user.id
+                          );
+                          if (submittedVerification !== undefined) {
+                            router.reload();
+                          } else {
+                            console.error( {error: submittedVerification })
+                          }
+                    }}>Hafna setningu</Button>
+                  </div>
+                  )}
+
                 </div>
-              ) : (
-                <div className={styles.verifyButton}>
-                  <Button onClick={async () => {
-                        const submittedVerification = await submitVerificationHandler(
-                          token, 
-                          simplifiedSentence.id, 
-                          loginContext.userLoggedIn.user.id
-                        );
-                        if (submittedVerification !== undefined) {
-                          router.reload();
-                        } else {
-                          console.error( {error: submittedVerification })
-                        }
-                  }}>Staðfesta setningu</Button>
-                </div>
-                )}
 
-              </div>
+              </Captcha>
 
             </div>    
           </>

@@ -71,7 +71,7 @@ export default function LeaderboardPage({ query, users }: { query: Query, users:
         <meta name="description" content="Setningarsöfnun" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charSet="utf-8"></meta>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
 

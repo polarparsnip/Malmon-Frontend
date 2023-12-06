@@ -11,7 +11,7 @@ export default function Header() {
     <header className={s.header}>
       <div className={s.header__title}>
       <Image
-            src='/favicon.ico'
+            src='/mlogo.png'
             alt='Logo'
             className={s.logo}
             width={40}

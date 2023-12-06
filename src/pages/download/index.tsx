@@ -13,7 +13,7 @@ export default function DownloadPage() {
         <title>Niðurhal</title>
         <meta name="description" content="Setningarsöfnun" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={`${styles.main} ${inter.className}`}>
         <div className={styles.container}>

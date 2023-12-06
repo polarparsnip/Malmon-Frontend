@@ -34,6 +34,9 @@
   --callout-border-rgb: 172, 175, 176;
   --card-rgb: 180, 185, 188;
   --card-border-rgb: 131, 134, 135;
+  --transition-time-short: 300ms;
+  --transition-time-long: 1200ms;
+  --transition-timing-function: ease-in-out;
 }
 
 @media (prefers-color-scheme: dark) {

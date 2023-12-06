@@ -1,28 +1,34 @@
-import { Users } from '@/types'
-import s from './Leaderboard.module.scss'
+/* eslint-disable no-plusplus */
+import { Users } from '@/types';
+import s from './Leaderboard.module.scss';
 
 export default function Leaderboard(
     {users}: {users: Users}
     ) {
+    let position = 1;
     return (
 
       <table className={s.table}>
         <thead>
           <tr>
-            <th>Position</th>
-            <th>Name</th>
-            <th>Sentences</th>
-            <th>Verifications</th>
+            <th>#</th>
+            <th>Nafn</th>
+            <th>Setningar</th>
+            <th>Yfirferðir</th>
           </tr>
         </thead>
         <tbody>
-          {users.users.map((value: any, index: any) => (
-            <tr key={value.id}>
-              <td>{index + 1}</td>
+          {users.users.map((value: any) => (
+            !value.admin ? (
+              <tr key={value.id}>
+              <td>{position++}</td>
               <td>{value.name}</td>
               <td>{value.completedsentences}</td>
               <td>{value.completedverifications}</td>
             </tr>
+            
+            ) : (<></>)
+          
           ))}
         </tbody>
       </table>
