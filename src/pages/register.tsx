@@ -1,27 +1,45 @@
 import { Button } from '@/components/Button/Button';
 import styles from '@/styles/Home.module.css';
+import { User } from '@/types';
 import Head from 'next/head';
 import Router from 'next/router';
 import { useState } from 'react';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-const registerHandler = async (event: any) => {
+/**
+ * Nýskráir notanda
+ */
+const registerHandler = async (event: any): Promise<User> => {
   event.preventDefault();
+
   const username = event.target.username.value;
   const name = event.target.name.value;
   const password = event.target.password.value;
 
-  const res = await fetch(`${baseUrl}/users/register`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Connection: 'keep-alive',
-    },
-    body: JSON.stringify({ name, username, password }),
-  });
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/users/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+      body: JSON.stringify({ name, username, password }),
+    });    
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
+
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
@@ -31,6 +49,7 @@ const registerHandler = async (event: any) => {
 
 export default function Register() {
   const [fail, setFail] = useState(false);
+  const [error, setError] = useState(null);
 
   return (
       <>
@@ -48,12 +67,16 @@ export default function Register() {
             <form className={styles.form}
               onSubmit={async (event) => {
                 event.preventDefault();
-                const userInfo = await registerHandler(event);
-                if (userInfo.username !== undefined) {
-                  setFail(false);
-                  Router.push('/login');
-                } else {
-                  setFail(true);
+                try {
+                  const userInfo = await registerHandler(event);
+                  if (userInfo.username !== undefined) {
+                    setFail(false);
+                    Router.push('/login');
+                  } else {
+                    setFail(true);
+                  }                  
+                } catch(e: any) {
+                  setError(e.message);
                 }
               }}
             >
@@ -72,6 +95,8 @@ export default function Register() {
               {fail ? <p>Ógilt lykilorð/password</p> : <p></p>}
               <Button type='submit'>Nýskrá</Button>
             </form>
+
+            {error && <p>{error}</p>}
 
           </div>
         </main>

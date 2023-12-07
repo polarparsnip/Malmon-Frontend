@@ -5,11 +5,9 @@ import styles from '@/styles/Home.module.css'
 import { Query, Users } from '@/types'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
-
-
+import { useState } from 'react'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
@@ -26,7 +24,6 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 
   let res;
-  
   try {
     res = await fetch(`${baseUrl}/users/?order=leaderboard&${off}&${lim}`, {
       method: 'GET',
@@ -34,17 +31,24 @@ export const getServerSideProps: GetServerSideProps = async (
         Authorization: `Bearer ${context.req.cookies.token}`,
       },
     });
-  } catch(e) {
-    console.error('error', e);
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    return {
+      props: { errorMessage: e.message || 'unknown error'},
+    };
   }
 
-  let users;
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
 
-  try {
-    users = await res?.json();
-  } catch(e) {
-    console.error('error', e);
+    return {
+      props: { errorMessage: message.error || 'unknown error'},
+    };
   }
+
+  const users = await res.json();
 
   if (!users) {
     return {
@@ -57,8 +61,15 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 }
 
-export default function LeaderboardPage({ query, users }: { query: Query, users: Users }) {
+export default function LeaderboardPage(
+  { query, users, errorMessage }: { query: Query, users: Users, errorMessage: any }
+) {
   const loginContext = useUserContext();
+  const [error, setError] = useState(null);
+
+  if(errorMessage && errorMessage !== error) {
+    setError(errorMessage);
+  }
 
   if (!users) {
     return (
@@ -72,7 +83,7 @@ export default function LeaderboardPage({ query, users }: { query: Query, users:
         </Head>
         <main className={styles.main}>
           <div className={styles.notFound}>
-            <h1>Ekki tókst að sækja gögn</h1>
+            {error ? <h1>{error}</h1> : <h1>Ekki tókst að sækja gögn</h1>}
           </div>
         </main>
       </>
@@ -106,6 +117,7 @@ export default function LeaderboardPage({ query, users }: { query: Query, users:
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
+        <div className={styles.grid}>
 
           <div className={styles.cards}>
 
@@ -120,7 +132,7 @@ export default function LeaderboardPage({ query, users }: { query: Query, users:
 
             </div>
           </div>
-
+        </div>
       </main>
     </>
   )

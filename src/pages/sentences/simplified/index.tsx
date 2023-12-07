@@ -3,7 +3,7 @@ import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import Paging from '@/components/paging/Paging'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'
-import { Query, SimplifiedSentence, SimplifiedSentences } from '@/types'
+import { Query, Sentence, SimplifiedSentence, SimplifiedSentences } from '@/types'
 import Cookies from 'js-cookie'
 import { GetServerSideProps, GetServerSidePropsContext } from 'next'
 import Head from 'next/head'
@@ -12,42 +12,75 @@ import { useEffect, useState } from 'react'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-
-const adminDeleteSimplifiedSentenceHandler = async (event: any, token: any, sentenceId: number) => {
+/**
+ * Frá admin, Eyðir einfaldri setningu
+ */
+const adminDeleteSimplifiedSentenceHandler = async (
+  event: any, token: any, sentenceId: number
+): Promise<object> => {
   event.preventDefault();
+
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/admin/sentences/simplified/${sentenceId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+      body: JSON.stringify({}),
+    });
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
   
-  const res = await fetch(`${baseUrl}/admin/sentences/simplified/${sentenceId}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Connection: 'keep-alive',
-    },
-    body: JSON.stringify({}),
-  });
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
   return result;
 };
 
-const adminUndoSimplifiedRejectionHandler = async (event: any, token: any, sentenceId: number) => {
+/**
+ * Frá admin, Afkallar höfnun á einfaldri setningu
+ */
+const adminUndoSimplifiedRejectionHandler = async (
+  event: any, token: any, sentenceId: number
+): Promise<Sentence> => {
   event.preventDefault();
 
   const formData = new FormData();
-
   formData.append('rejected', 'false');
-  
 
-  const res = await fetch(`${baseUrl}/admin/sentences/simplified/${sentenceId}/undo`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/admin/sentences/simplified/${sentenceId}/undo`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });    
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
+  
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
@@ -76,21 +109,25 @@ export const getServerSideProps: GetServerSideProps = async (
         Authorization: `Bearer ${context.req.cookies.token}`,
       },
     });
-  } catch(e) {
-    console.error('error', e);
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    return {
+      props: { errorMessage: e.message || 'unknown error'},
+    };
   }
 
-  let simplifiedSentences;
-  
-  try {
-    simplifiedSentences = await res?.json();
-  } catch(e) {
-    console.error('error', e);
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+
+    return {
+      props: { errorMessage: message.error || 'unknown error'},
+    };
   }
 
-  console.log(simplifiedSentences)
+  const simplifiedSentences = await res.json();
   
-
   if (!simplifiedSentences) {
     return {
       props: {},
@@ -103,11 +140,13 @@ export const getServerSideProps: GetServerSideProps = async (
 }
 
 export default function SimplifiedSentencesPage(
-  { query, simplifiedSentences }: { query: Query, simplifiedSentences: SimplifiedSentences }
+  { query, simplifiedSentences, errorMessage }: 
+  { query: Query, simplifiedSentences: SimplifiedSentences, errorMessage: any }
 ) {
   const router = useRouter();
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -121,6 +160,10 @@ export default function SimplifiedSentencesPage(
     checkLogin();
   }, [loginContext, router])
 
+  if(errorMessage && errorMessage !== error) {
+    setError(errorMessage);
+  }
+
   if (!simplifiedSentences) {
     return (
       <>
@@ -133,7 +176,7 @@ export default function SimplifiedSentencesPage(
         </Head>
         <main className={styles.main}>
           <div className={styles.notFound}>
-            <h1>Ekki tókst að sækja gögn</h1>
+            {error ? <h1>{error}</h1> : <h1>Ekki tókst að sækja gögn</h1>}
           </div>
         </main>
       </>
@@ -167,8 +210,8 @@ export default function SimplifiedSentencesPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
+        <div className={styles.grid}>
 
-   
           <div className={styles.cards}>
             <div className={styles.adminSentences}>
                 {simplifiedSentences.simplifiedSentences.map((value: SimplifiedSentence) => (
@@ -181,54 +224,53 @@ export default function SimplifiedSentencesPage(
                         {value.rejected ? (<p>Hefur verið hafnað</p>) : (<p>Hefur ekki verið hafnað</p>)}
                         {value.verified ? (<p>Hefur verið staðfest</p>) : (<p>Hefur ekki verið staðfest</p>)}
                         <div className={styles.adminSimplifiedButtons}>
-                        <Button onClick={async (event: any) => {
-                            const undoRejection = await adminUndoSimplifiedRejectionHandler(
-                              event,
-                              token, 
-                              value.id
-                            );
-                              if (undoRejection !== undefined) {
-                                router.reload();
-                              } else {
-                                console.error( {error: undoRejection})
-                              }
-                            }}>
-                              Eyða Höfnun
-                          </Button>
                           <Button onClick={async (event: any) => {
-                            const deletedSentence = await adminDeleteSimplifiedSentenceHandler(
-                              event,
-                              token, 
-                              value.id
-                            );
-                              if (deletedSentence !== undefined) {
-                                router.reload();
-                              } else {
-                                console.error( {error: deletedSentence})
-                              }
-                            }}>
-                              Eyða Setningu
+                            try {
+                              await adminUndoSimplifiedRejectionHandler(
+                                event,
+                                token, 
+                                value.id
+                              );
+                              router.reload();
+                            } catch(e: any) {
+                              setError(e.message);
+                            }
+                          }}>
+                            Eyða Höfnun
+                          </Button>
+
+                          <Button onClick={async (event: any) => {
+                            try {
+                              await adminDeleteSimplifiedSentenceHandler(
+                                event,
+                                token, 
+                                value.id
+                              );
+                              router.reload();                              
+                            } catch(e: any) {
+                              setError(e.message);
+                            }
+                          }}>
+                            Eyða Setningu
                           </Button>
                         </div>
-                      </>) : (<></>)
-                      
-                    }
-
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </div>
                 ))}
-              
             </div>
-
-              {!(simplifiedSentences.simplifiedSentences.length < 10 
-              && (query.offset === 0 || query.offset === undefined)) ? (
-                <div className='paging'>
-                  <Paging paging={simplifiedSentences} query={query} page={'sentences/simplified'}></Paging>
-                </div>
-              ) : null}
-            
           </div>
-      
 
+            {!(simplifiedSentences.simplifiedSentences.length < 10 
+            && (query.offset === 0 || query.offset === undefined)) ? (
+              <div className='paging'>
+                <Paging paging={simplifiedSentences} query={query} page={'sentences/simplified'}></Paging>
+              </div>
+            ) : null}
+
+        </div>
       </main>
     </>
   )

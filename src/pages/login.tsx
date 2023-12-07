@@ -1,6 +1,7 @@
 import { Button } from '@/components/Button/Button';
 import { useUserContext } from '@/context';
 import styles from '@/styles/Home.module.css';
+import { UserInfo } from '@/types';
 import Cookies from 'js-cookie';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -9,20 +10,37 @@ import { useState } from 'react';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-const loginHandler = async (event: any) => {
+/**
+ * Innskráir notanda
+ */
+const loginHandler = async (event: any): Promise<UserInfo> => {
   event.preventDefault();
   const username = event.target.username.value;
   const password = event.target.password.value;
-  const res = await fetch(`${baseUrl}/users/login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Connection: 'keep-alive',
-    },
-    body: JSON.stringify({ username, password }),
-  });
+
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/users/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
+
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
@@ -36,6 +54,7 @@ const loginHandler = async (event: any) => {
 export default function Login() {
   const loginContext = useUserContext();
   const [fail, setFail] = useState(false);
+  const [error, setError] = useState(null);
 
   return (
       <>
@@ -50,21 +69,30 @@ export default function Login() {
           <div className={styles.loginForm}>
 
             <h1>Innskráning</h1>
+
             <form className={styles.form}
               onSubmit={async (event) => {
                 event.preventDefault();
-                const userInfo = await loginHandler(event);
-                if (userInfo.user !== undefined) {
-                  loginContext.setUserLoggedIn({ login: true, user: userInfo.user });
-                  Cookies.set('user', JSON.stringify({ login: true, user: userInfo.user }), { expires: 3 });
-                  setFail(false);
-                  if(userInfo.user.admin) {
-                    Router.push('/admin');
+
+                try {
+                  const userInfo = await loginHandler(event);
+
+                  if (userInfo && userInfo.user !== undefined) {
+                    loginContext.setUserLoggedIn({ login: true, user: userInfo.user });
+                    Cookies.set('user', JSON.stringify({ login: true, user: userInfo.user }), { expires: 3 });
+                    setFail(false);
+
+                    if(userInfo.user.admin) {
+                      Router.push('/admin');
+                    } else {
+                      Router.push('/');
+                    }
                   } else {
-                    Router.push('/');
+                    setFail(true);
                   }
-                } else {
-                  setFail(true);
+
+                } catch(e: any) {
+                  setError(e.message);
                 }
               }}
             >
@@ -81,6 +109,8 @@ export default function Login() {
             </form>
 
             <Link href='/register'>Nýskráning</Link>
+
+            {error && <p>{error}</p>}
           </div>
         </main>
       </>

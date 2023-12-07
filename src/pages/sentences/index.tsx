@@ -12,25 +12,33 @@ import { useEffect, useState } from 'react'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-const adminRegisterSentenceHandler = async (event: any, token: any) => {
+/**
+ * Frá admin, Skráir og sendir inn nýja setningu
+ */
+const adminRegisterSentenceHandler = async (event: any, token: any): Promise<Sentence> => {
   event.preventDefault();
 
   const formData = new FormData();
   formData.append('sentence', event.target.sentence.value);
 
-  const res = await fetch(`${baseUrl}/admin/sentences`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/admin/sentences`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });    
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
 
-  if (!res.ok) {
+  if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
     console.error(message)
-    
     throw new Error(message || 'Unknown error');
   }
 
@@ -39,42 +47,76 @@ const adminRegisterSentenceHandler = async (event: any, token: any) => {
   return result;
 };
 
-const adminPatchSentenceHandler = async (event: any, token: any, sentenceId: number) => {
+/**
+ * Frá admin, Breytir setningu sem er núþegar til
+ */
+const adminPatchSentenceHandler = async (
+  event: any, token: any, sentenceId: number
+): Promise<Sentence> => {
   event.preventDefault();
-  const sentence = event.target.sentence.value;
 
+  const sentence = event.target.sentence.value;
   const formData = new FormData();
 
   if (event.target.name.value.trim().length > 0) {
     formData.append('sentence', sentence);
   }
 
-  const res = await fetch(`${baseUrl}/admin/sentences/${sentenceId}`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/admin/sentences/${sentenceId}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    });    
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
+
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
   return result;
 };
 
-const adminDeleteSentenceHandler = async (token: any, sentenceId: number) => {
+/**
+ * Frá admin, Eyðir setningu
+ */
+const adminDeleteSentenceHandler = async (token: any, sentenceId: number): Promise<object> => {
+
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/admin/sentenes/${sentenceId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+      body: JSON.stringify({}),
+    });    
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
   
-  const res = await fetch(`${baseUrl}/admin/sentences/${sentenceId}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Connection: 'keep-alive',
-    },
-    body: JSON.stringify({}),
-  });
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
@@ -96,7 +138,6 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 
   let res;
-
   try {
     res = await fetch(`${baseUrl}/admin/sentences/?${off}&${lim}`, {
       method: 'GET',
@@ -104,17 +145,24 @@ export const getServerSideProps: GetServerSideProps = async (
         Authorization: `Bearer ${context.req.cookies.token}`,
       },
     });
-  } catch(e) {
-    console.error('error', e);
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    return {
+      props: { errorMessage: e.message || 'unknown error'},
+    };
   }
 
-  let sentences;
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
 
-  try {
-    sentences = await res?.json();
-  } catch(e) {
-    console.error('error', e);
+    return {
+      props: { errorMessage: message.error || 'unknown error'},
+    };
   }
+
+  const sentences = await res.json();
 
   if (!sentences) {
     return {
@@ -128,7 +176,7 @@ export const getServerSideProps: GetServerSideProps = async (
 }
 
 export default function SentencesPage(
-  { query, sentences }: { query: Query, sentences: Sentences }
+  { query, sentences, errorMessage }: { query: Query, sentences: Sentences, errorMessage: any }
 ) {
   const router = useRouter();
   const [token, setToken] = useState('');
@@ -147,6 +195,10 @@ export default function SentencesPage(
     checkLogin();
   }, [loginContext, router])
 
+  if(errorMessage && errorMessage !== error) {
+    setError(errorMessage);
+  }
+
   if (!sentences) {
     return (
       <>
@@ -159,7 +211,7 @@ export default function SentencesPage(
         </Head>
         <main className={styles.main}>
           <div className={styles.notFound}>
-            <h1>Ekki tókst að sækja gögn</h1>
+            {error ? <h1>{error}</h1> : <h1>Ekki tókst að sækja gögn</h1>}
           </div>
         </main>
       </>
@@ -194,10 +246,11 @@ export default function SentencesPage(
       </Head>
       <main className={styles.main}>
 
-        <div className={styles.cards}>
-          
-          <div className={styles.adminSentences}>
-              {sentences.sentences.map((value: Sentence) => (
+        <div className={styles.grid}>
+          <div className={styles.cards}>
+            
+            <div className={styles.adminSentences}>
+                {sentences.sentences.map((value: Sentence) => (
                   <div className={styles.card} key={value.id} >
 
                     <SentenceCard value={value.sentence} ></SentenceCard>
@@ -211,30 +264,30 @@ export default function SentencesPage(
                         <form className={styles.form}
                             onSubmit={async (event) => {
                             event.preventDefault();
-                            const patchSentence = await adminPatchSentenceHandler(event, token, value.id);
-                            if (!patchSentence.error) {
+                            try {
+                              await adminPatchSentenceHandler(event, token, value.id);
                               router.reload();
-                            } else {
-                              console.error( {error: patchSentence })
+                            } catch(e: any) {
+                              setError(e.message);
                             }
                           }}
                         >
                           <label htmlFor='patchSentence'></label>
-                          <br />
-                          <input type='text' id='patchSentence' required/>
-                          <br />
+                          <input type='text' id='patchSentence' placeholder="Uppfæra setningu" required/>
+
                           <Button type='submit'>Uppfæra Setningu</Button>
                         </form>
                       </div>
                     ) : null}
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-                      <div><Button onClick={async () => {
-                        const deletedSentence = await adminDeleteSentenceHandler(token, value.id);
-                        if (deletedSentence !== undefined) {
+                      <div><Button onClick={async (event: any) => {
+                        event.preventDefault();
+                        try {
+                          await adminDeleteSentenceHandler(token, value.id);
                           router.reload();
-                        } else {
-                          console.error( {error: deletedSentence})
+                        } catch(e: any) {
+                          setError(e.message);
                         }
                       }}>Eyða Setningu</Button></div>) : null
                     }
@@ -242,7 +295,8 @@ export default function SentencesPage(
                   </div>
                 ))}
             
-          </div>
+            </div>
+          
 
             {!(sentences.sentences.length < 10 && (query.offset === 0 || query.offset === undefined)) ? (
               <div className='paging'>
@@ -254,13 +308,13 @@ export default function SentencesPage(
               <div className={styles.postForm}>
                 <h1>Bæta við setningu</h1>
                 <form className={styles.form}
-                  onSubmit={async (event) => {
+                  onSubmit={async (event: any) => {
                     event.preventDefault();
                     try {
                       await adminRegisterSentenceHandler(event, token);
                       router.reload();
                     } catch(e: any) {
-                      setError(e.message);
+                      setError(e.error);
                     }
 
                   }}
@@ -268,13 +322,15 @@ export default function SentencesPage(
                   {error && <p>{error}</p>}
 
                   <label htmlFor='sentence'>Setning:</label>
-                  <br />
-                  <input type='text' id='sentence' required/>
-                  <br />
+
+                  <input type='text' id='sentence' placeholder="Skrá setningu" required/>
+
                   <Button type='submit'>Skrá setningu</Button>
                 </form>
               </div>
             ) : null }
+
+          </div>
         </div>
       </main>
     </>

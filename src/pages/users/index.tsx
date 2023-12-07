@@ -10,22 +10,37 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
-
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-const adminDeleteUserHandler = async (token: any, userId: number) => {
+/**
+ * Frá admin, Sendir inn request til að eyða notanda
+ */
+const adminDeleteUserHandler = async (token: any, userId: number): Promise<object> => {
+
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        Accept: '*/*',
+        'Accept-Encoding': 'gzip, deflate, br',
+        Connection: 'keep-alive',
+      },
+      body: JSON.stringify({}),
+    });
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
   
-  const res = await fetch(`${baseUrl}/admin/users/${userId}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      Accept: '*/*',
-      'Accept-Encoding': 'gzip, deflate, br',
-      Connection: 'keep-alive',
-    },
-    body: JSON.stringify({}),
-  });
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
   const result = await res.json();
 
@@ -47,7 +62,6 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 
   let res;
-  
   try {
     res = await fetch(`${baseUrl}/users/?${off}&${lim}`, {
       method: 'GET',
@@ -55,16 +69,24 @@ export const getServerSideProps: GetServerSideProps = async (
         Authorization: `Bearer ${context.req.cookies.token}`,
       },
     });
-  } catch(e) {
-    console.error('error', e);
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    return {
+      props: { errorMessage: e.message || 'unknown error'},
+    };
   }
 
-  let users;
-  try {
-    users = await res?.json();
-  } catch(e) {
-    console.error('error', e);
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
+
+    return {
+      props: { errorMessage: message.error || 'unknown error'},
+    };
   }
+
+  const users = await res.json();
 
   if (!users) {
     return {
@@ -77,10 +99,13 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 }
 
-export default function UsersPage({ query, users }: { query: Query, users: Users }) {
+export default function UsersPage(
+  { query, users, errorMessage }: { query: Query, users: Users, errorMessage: any }
+) {
   const router = useRouter();
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkLogin = async () => {
@@ -95,6 +120,10 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
     checkLogin();
   }, [loginContext, router])
 
+  if(errorMessage && errorMessage !== error) {
+    setError(errorMessage);
+  }
+
   if (!users) {
     return (
       <>
@@ -107,7 +136,7 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
         </Head>
         <main className={styles.main}>
           <div className={styles.notFound}>
-            <h1>Ekki tókst að sækja gögn</h1>
+            {error ? <h1>{error}</h1> : <h1>Ekki tókst að sækja gögn</h1>}
           </div>
         </main>
       </>
@@ -141,21 +170,19 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-
-          <div className={styles.cards}>
+        <div className={styles.grid}>
             <div className={styles.userCards}>
               {users.users.map((value: User) => (
                   <div className={styles.card} key={value.id} >
-
                     <UserCard value={value} ></UserCard>
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
                       <Button onClick={async () => {
-                        const deletedSentence = await adminDeleteUserHandler(token, value.id);
-                        if (deletedSentence !== undefined) {
+                        try {
+                          await adminDeleteUserHandler(token, value.id);
                           router.reload();
-                        } else {
-                          console.error( {error: deletedSentence})
+                        } catch(e: any) {
+                          setError(e.message);
                         }
                       }}>Eyða Notanda</Button>
                       ) : (
@@ -164,7 +191,6 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
 
                   </div>
                 ))}
-            
             </div>
 
             {!(users.users.length < 10 && (query.offset === 0 || query.offset === undefined)) ? (
@@ -172,8 +198,7 @@ export default function UsersPage({ query, users }: { query: Query, users: Users
                 <Paging paging={users} query={query} page={'users'}></Paging>
               </div>
             ) : null}
-          </div>
-
+        </div>
       </main>
     </>
   )

@@ -45,7 +45,7 @@ export type User = {
     id: number;
     name: string;
     username: string;
-    // admin: boolean;
+    admin: boolean;
     completedsentences: number;
     completedverifications: number;
     created: string;
@@ -55,6 +55,12 @@ export type Users = {
     _links: LinksProps;
     users: Array<User>;
 }
+
+export type UserInfo = {
+    token: string;
+    expiresIn: number;
+    user: User;
+};
 
 export type PagingProps = {
     // limits: number;

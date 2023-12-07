@@ -12,63 +12,89 @@ import { useEffect, useState } from 'react'
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-const submitSentenceHandler = async (event: any, token: any, sentenceId: number, userId: number) => {
+/**
+ * Sendir inn einfaldaða setningu frá notanda
+ */
+const submitSentenceHandler = async (
+  event: any, 
+  token: any, 
+  sentenceId: number, 
+  userId: number
+): Promise<Sentence> => {
   event.preventDefault();
 
   // const formData = new FormData();
   // formData.append('simplifiedSentence', event.target.simplifiedSentence.value);
   // formData.append('sentenceId', String(sentenceId));
   // formData.append('userId', String(userId));
+  let res;
+  try {
+    res = await fetch(`${baseUrl}/users/sentences/simplified`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ 
+        'simplifiedSentence': event.target.simplifiedSentence.value, 
+        'sentenceId': sentenceId 
+      }),
+    });
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
 
-  const res = await fetch(`${baseUrl}/users/sentences/simplified`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ 
-      'simplifiedSentence': event.target.simplifiedSentence.value, 
-      'sentenceId': sentenceId 
-    }),
-  });
-
-  if (!res.ok) {
+  if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
     console.error(message)
-    
     throw new Error(message || 'Unknown error');
   }
 
-  
-
-  const updateRes = await fetch(`${baseUrl}/users/sentences/${sentenceId}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (!updateRes.ok) {
-    console.error('Error:', updateRes.status, updateRes.statusText);
-    return updateRes;
+  let updateRes;
+  try {
+    updateRes = await fetch(`${baseUrl}/users/sentences/${sentenceId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
   }
 
-  const updateUser = await fetch(`${baseUrl}/users/${userId}`, {
-    method: 'PATCH',
-    headers: {
-     'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ 
-      'completedSentences': '1'
-    }),
-  });
+  if (updateRes && !updateRes.ok) {
+    console.error('Error:', updateRes.status, updateRes.statusText);
+    const message = await updateRes.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
+  }
 
-  if (!updateUser.ok) {
+  let updateUser;
+  try {
+    updateUser = await fetch(`${baseUrl}/users/${userId}`, {
+      method: 'PATCH',
+      headers: {
+      'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ 
+        'completedSentences': '1'
+      }),
+    });
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    throw new Error(e.message || 'Unknown error');
+  }
+
+  if (updateUser && !updateUser.ok) {
     console.error('Error:', updateUser.status, updateUser.statusText);
-    return updateUser;
+    const message = await updateUser.json();
+    console.error(message)
+    throw new Error(message || 'Unknown error');
   }
 
   const result = await res.json();
@@ -88,17 +114,24 @@ export const getServerSideProps: GetServerSideProps = async (
         Authorization: `Bearer ${context.req.cookies.token}`,
       },
     });
-  } catch(e) {
-    console.error('error', e);
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    return {
+      props: { errorMessage: e.message || 'unknown error'},
+    };
   }
 
-  let sentence;
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
 
-  try {
-    sentence = await res?.json();
-  } catch(e) {
-    console.error('error', e);
+    return {
+      props: { errorMessage: message.error || 'unknown error'},
+    };
   }
+
+  const sentence = await res.json();
 
   if (!sentence) {
     return {
@@ -111,7 +144,10 @@ export const getServerSideProps: GetServerSideProps = async (
   }
 }
 
-export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
+export default function SimplifyPage( 
+  { sentence, errorMessage }: 
+  { sentence: Sentence, errorMessage: any } 
+) {
   const router = useRouter();
   const [token, setToken] = useState('');
   const loginContext = useUserContext();
@@ -129,6 +165,10 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
     checkLogin();
   }, [loginContext, router])
 
+  if(errorMessage && errorMessage !== error) {
+    setError(errorMessage);
+  }
+
   if (!sentence) {
     return (
       <>
@@ -141,7 +181,7 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
         </Head>
         <main className={styles.main}>
           <div className={styles.notFound}>
-            <h1>Ekki tókst að sækja gögn</h1>
+          {error ? <h1>{error}</h1> : <h1>Ekki tókst að sækja gögn</h1>}
           </div>
         </main>
       </>
@@ -175,16 +215,14 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        
+        <div className={styles.grid} >
           <div className={styles.cards} >
-
             <SentenceCard value={sentence.sentence} />
             <Captcha>
               <div className={styles.submitSentenceForm}>
                 <form className={styles.form}
                   onSubmit={async (event) => {
                     event.preventDefault();
-
                     try {
                       await submitSentenceHandler(
                         event, 
@@ -192,30 +230,21 @@ export default function SimplifyPage( { sentence }: { sentence: Sentence } ) {
                         sentence.id, 
                         loginContext.userLoggedIn.user.id
                     );
-
                     router.reload();
-
                     } catch(e: any) {
                       setError(e.message);
                     }
-
                   }}
                 >
                   {error && <p>{error}</p>}
-
                   <label htmlFor='simplifiedSentence'>Einfalda:</label>
-
-                  <input type='text' id='simplifiedSentence' required/>
-
+                  <input type='text' id='simplifiedSentence' placeholder="Einfalda setningu" required/>
                   <Button type='submit'>Senda inn</Button>
                 </form>
               </div>
-
             </Captcha>
-
-          </div>    
-
-
+          </div>
+        </div> 
       </main>
     </>
   )

@@ -3,8 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import s from './Header.module.scss';
 
-
-
 export default function Header() {
   const loginContext = useUserContext();
   return (

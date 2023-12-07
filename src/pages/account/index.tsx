@@ -1,13 +1,12 @@
-/* eslint-disable no-nested-ternary */
 import { useUserContext } from '@/context';
 import styles from '@/styles/Home.module.css';
 import { User } from '@/types';
 import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
+import { useState } from 'react';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
 
 export const getServerSideProps: GetServerSideProps = async (
   context: GetServerSidePropsContext
@@ -20,18 +19,24 @@ export const getServerSideProps: GetServerSideProps = async (
         Authorization: `Bearer ${context.req.cookies.token}`,
       },
     });
-  } catch(e) {
-    console.error('Errorr:', e.message);
-    console.error('error', e);
+  } catch(e: any) {
+    console.error('Error:', e.message)
+    return {
+      props: { errorMessage: e.message || 'unknown error'},
+    };
   }
 
-  let userInfo;
+  if (res && !res.ok) {
+    console.error('Error:', res.status, res.statusText);
+    const message = await res.json();
+    console.error(message)
 
-  try {
-    userInfo = await res?.json();
-  } catch(e) {
-    console.error('error', e);
+    return {
+      props: { errorMessage: message.error || 'unknown error'},
+    };
   }
+
+  const userInfo = await res.json();
 
   if (!userInfo) {
     return {
@@ -45,19 +50,18 @@ export const getServerSideProps: GetServerSideProps = async (
 }
 
 export default function UserAccountPage( 
-  { userInfo }: { userInfo: User } 
+  { userInfo, errorMessage }: { userInfo: User, errorMessage: any } 
 ) {
   // const router = useRouter();
   // const [token, setToken] = useState('');
   const loginContext = useUserContext();
+  const [error, setError] = useState(null);
+
 
   // useEffect(() => {
   //   const checkLogin = async () => {
   //     const {user} = loginContext.userLoggedIn;
-
   //     if(user !== undefined){
-  //       // const localToken = localStorage.getItem('token');
-  //       // if(localToken) setToken(localToken);
   //       const cookieToken = Cookies.get('token');
   //       if(cookieToken) setToken(cookieToken);
   //     }
@@ -65,7 +69,9 @@ export default function UserAccountPage(
   //   checkLogin();
   // }, [loginContext, router])
 
-  // console.log(loginContext.userLoggedIn)
+  if(errorMessage && errorMessage !== error) {
+    setError(errorMessage);
+  }
 
   if (!userInfo) {
     return (
@@ -79,7 +85,7 @@ export default function UserAccountPage(
         </Head>
         <main className={styles.main}>
           <div className={styles.notFound}>
-            <h1>Ekki tókst að sækja gögn</h1>
+            {error ? <h1>{error}</h1> : <h1>Ekki tókst að sækja gögn</h1>}
           </div>
         </main>
       </>
@@ -173,7 +179,7 @@ export default function UserAccountPage(
       <main className={styles.main}>
         {/* {loginContext.userLoggedIn.login ? ( */}
           <>
-            <div className={styles.cards} >
+            <div className={styles.grid} >
 
               <div className={styles.userInfo}>
                 <h3>Notendanafn: {userInfo.username}</h3>
