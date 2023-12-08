@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import { Users } from '@/types';
+import { User, Users } from '@/types';
 import s from './Leaderboard.module.scss';
 
 export default function Leaderboard(
@@ -18,17 +18,15 @@ export default function Leaderboard(
           </tr>
         </thead>
         <tbody>
-          {users.users.map((value: any) => (
+          {users.users.map((value: User) => (
             !value.admin ? (
               <tr key={value.id}>
-              <td>{position++}</td>
-              <td>{value.name}</td>
-              <td>{value.completedsentences}</td>
-              <td>{value.completedverifications}</td>
-            </tr>
-            
-            ) : (<></>)
-          
+                <td>{position++}</td>
+                <td>{value.name}</td>
+                <td>{value.completedsentences}</td>
+                <td>{value.completedverifications}</td>
+              </tr>
+            ) : (<></>)    
           ))}
         </tbody>
       </table>
