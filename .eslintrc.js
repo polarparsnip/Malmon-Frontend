@@ -15,6 +15,7 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'import/no-unresolved': 'off',
     'import/order': 'off',
+    'no-unused-vars': 'off',
     quotes: ['error', 'single'],
     'no-console': [
       'warn',
