@@ -16,7 +16,7 @@ export default function Header() {
             height={40}
             priority
           />
-        <h1><Link href='/' >Forsíða</Link></h1>
+        <h1><Link href='/' >Malmon</Link></h1>
       </div>
       
       <div className={s.header__navigation}>

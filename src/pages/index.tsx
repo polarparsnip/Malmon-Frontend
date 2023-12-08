@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Forsíða</title>
+        <title>Malmon</title>
         <meta name="description" content="Setningarsöfnun" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/mlogo.png" />
