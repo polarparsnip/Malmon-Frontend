@@ -1,6 +1,5 @@
 import { Button } from '@/components/Button/Button'
 import Captcha from '@/components/Captcha/Captcha'
-// eslint-disable-next-line import/no-unresolved
 import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import { useUserContext } from '@/context'
 import styles from '@/styles/Home.module.css'

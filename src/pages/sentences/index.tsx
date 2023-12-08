@@ -1,5 +1,4 @@
 import { Button } from '@/components/Button/Button'
-// eslint-disable-next-line import/no-unresolved
 import SentenceCard from '@/components/SentenceCard/SentenceCard'
 import Paging from '@/components/paging/Paging'
 import { useUserContext } from '@/context'
