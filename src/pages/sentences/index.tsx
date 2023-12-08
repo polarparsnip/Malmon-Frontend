@@ -212,7 +212,7 @@ export default function SentencesPage(
     )
   }
 
-  if (!sentences.sentences) {
+  if (!sentences.sentences || sentences.sentences.length === 0) {
     return (
       <main className={styles.main}>
         {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (

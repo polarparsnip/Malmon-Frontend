@@ -90,7 +90,7 @@ export default function LeaderboardPage(
     )
   }
 
-  if (!users.users) {
+  if (!users.users || users.users.length === 0) {
     return (
       <main className={styles.main}>
         {loginContext.userLoggedIn.login ? (

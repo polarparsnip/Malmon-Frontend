@@ -177,7 +177,6 @@ export default function UserAccountPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        {/* {loginContext.userLoggedIn.login ? ( */}
           <>
             <div className={styles.grid} >
 
@@ -196,11 +195,6 @@ export default function UserAccountPage(
 
             </div>    
           </>
-        {/* ) : (
-          <div className={styles.notFound}>
-            <h1>Síða fannst ekki</h1>
-          </div>
-        )} */}
       </main>
     </>
   )

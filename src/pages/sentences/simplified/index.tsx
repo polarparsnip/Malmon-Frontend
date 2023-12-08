@@ -179,7 +179,7 @@ export default function SimplifiedSentencesPage(
     )
   }
 
-  if (!simplifiedSentences.simplifiedSentences) {
+  if (!simplifiedSentences.simplifiedSentences || simplifiedSentences.simplifiedSentences.length === 0) {
     return (
       <main className={styles.main}>
         {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
