@@ -18,17 +18,17 @@ const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 const adminRegisterSentenceHandler = async (event: any, token: any): Promise<Sentence> => {
   event.preventDefault();
 
-  const formData = new FormData();
-  formData.append('sentence', event.target.sentence.value);
+  const sentenceData = { 'sentence': event.target.sentence.value };
 
   let res;
   try {
     res = await fetch(`${baseUrl}/admin/sentences`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
+      body: JSON.stringify(sentenceData),
     });    
   } catch(e: any) {
     console.error('Error:', e.message)
@@ -55,22 +55,19 @@ const adminPatchSentenceHandler = async (
 ): Promise<Sentence> => {
   event.preventDefault();
 
-  const sentence = event.target.sentence.value;
-  const formData = new FormData();
-
-  if (event.target.name.value.trim().length > 0) {
-    formData.append('sentence', sentence);
-  }
-
+  const sentence = event.target.patchSentence.value;
+  const sentenceData = { 'sentence': sentence };
+  
   let res;
   try {
     res = await fetch(`${baseUrl}/admin/sentences/${sentenceId}`, {
       method: 'PATCH',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: formData,
-    });    
+      body: JSON.stringify(sentenceData),
+    });
   } catch(e: any) {
     console.error('Error:', e.message)
     throw new Error(e.message || 'Unknown error');
@@ -95,14 +92,11 @@ const adminDeleteSentenceHandler = async (token: any, sentenceId: number): Promi
 
   let res;
   try {
-    res = await fetch(`${baseUrl}/admin/sentenes/${sentenceId}`, {
+    res = await fetch(`${baseUrl}/admin/sentences/${sentenceId}`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
-        Accept: '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        Connection: 'keep-alive',
       },
       body: JSON.stringify({}),
     });    

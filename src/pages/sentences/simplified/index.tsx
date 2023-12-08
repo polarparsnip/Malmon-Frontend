@@ -27,11 +27,7 @@ const adminDeleteSimplifiedSentenceHandler = async (
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
-        Accept: '*/*',
-        'Accept-Encoding': 'gzip, deflate, br',
-        Connection: 'keep-alive',
       },
-      body: JSON.stringify({}),
     });
   } catch(e: any) {
     console.error('Error:', e.message)
