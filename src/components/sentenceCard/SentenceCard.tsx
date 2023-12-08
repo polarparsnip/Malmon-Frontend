@@ -1,4 +1,3 @@
-import { useUserContext } from '@/context';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import s from './SentenceCard.module.scss';
@@ -6,17 +5,16 @@ import s from './SentenceCard.module.scss';
 export default function SentenceCard(
   {value}: {value: String}
   ) {
-  
-  const loginContext = useUserContext();
+
   
   const [ref, inView] = useInView({
     triggerOnce: true,
   });
   
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  };
+  // const fadeInUp = {
+  //   hidden: { opacity: 0, y: 20 },
+  //   visible: { opacity: 1, y: 0 },
+  // };
 
   const slideInFromEdge = {
     hidden: { opacity: 0, x: '-100%' },

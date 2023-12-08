@@ -13,9 +13,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'import/no-extraneous-dependencies': 0,
     'no-underscore-dangle': 'off',
-    'import/no-unresolved': 'off',
     'import/order': 'off',
-    'no-unused-vars': 'off',
     quotes: ['error', 'single'],
     'no-console': [
       'warn',
