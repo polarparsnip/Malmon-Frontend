@@ -17,8 +17,6 @@ async function convertToCSV(sentenceData) {
 async function downloadFile(sentenceData, filename, format = 'json') {
   let blob;
 
-  console.log(sentenceData);
-
   if (format === 'csv') {
     blob = new Blob([sentenceData], { type: 'text/csv;charset=utf-8;' });
   } else {

@@ -1,8 +1,7 @@
-import Link from 'next/link';
-import s from './Paging.module.scss';
-// import { ParsedUrlQuery } from 'querystring';
-import { useUserContext } from '@/context';
 import { PagingProps, Query } from '@/types';
+import Link from 'next/link';
+import React from 'react';
+import s from './Paging.module.scss';
 
 function getPage(limit: number, offset: number) {
   return ((offset+limit)/limit)
@@ -16,8 +15,7 @@ export default function Paging({
   paging: PagingProps,
   query: Query,
   page: string,
-}): JSX.Element {
-  const loginContext = useUserContext();
+}): React.JSX.Element {
 
   return (
     <section className={s.paging}>

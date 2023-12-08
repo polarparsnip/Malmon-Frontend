@@ -21,6 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
     const end = () => {
       setLoading(false);
     };
+    // eslint-disable-next-line no-shadow
     const error = () => {
       setError(true);
     }

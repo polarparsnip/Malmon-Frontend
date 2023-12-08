@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
+import * as React from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
 
 interface IUserContext {
