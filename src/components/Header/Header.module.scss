@@ -28,19 +28,21 @@
     padding: 20px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
 
-
-    
     animation: var(--transition-time-short) var(--transition-timing-function) fade-in;
     
+    &__title {
+      display: flex;
+      justify-content: end;
+      gap: 0.5rem;
 
-    h1 a:hover {
+      h1 {
+        font-family: 'Calibri';
+        font-size: 2.1rem;
+        color: #000;
+      }
+      h1 a:hover {
         text-decoration: none;
       }
-
-    &__title {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
     }
 
     &__navigation {
