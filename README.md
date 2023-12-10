@@ -3,7 +3,7 @@
 ## Setup
 
 Til að keyra síðu í development þarf .env.local skrá með þessum upplýsingum:
-NEXT_PUBLIC_API_URL=http://localhost:3000 **Ef vefþjónn er keyrður á port 3000**
+NEXT_PUBLIC_API_URL=http://localhost:3000 **# Ef vefþjónn er keyrður á port 3000**
 
 Annars:
 NEXT_PUBLIC_API_URL=**slóð á setninga vefþjónustu**
