@@ -1,47 +1,97 @@
 import { useUserContext } from '@/context';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import s from './Header.module.scss';
 
 export default function Header() {
   const loginContext = useUserContext();
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className={s.header}>
       <div className={s.header__title}>
-      <Image
-            src='/mlogo.png'
-            alt='Logo'
-            className={s.logo}
-            width={40}
-            height={40}
-            priority
-          />
+        <Image
+              src='/mlogo.png'
+              alt='Logo'
+              className={s.logo}
+              width={40}
+              height={40}
+              priority
+        />
         <h1><Link href='/' >MÁLMON</Link></h1>
       </div>
       
-      <div className={s.header__navigation}>
+      <nav className={s.header__navigation}>
         {loginContext.userLoggedIn.login ? (
           <>
-            <p><Link href='/download'>Gögn</Link></p>
-            <p><Link href='/leaderboard'>Stigatafla</Link></p>
-            <p><Link href='/simplify'>Einfalda</Link></p>
-            <p><Link href='/verify'>Yfirferð</Link></p>
-            {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-              <p><Link href='/admin'>Admin</Link></p>
-            ) : (
-              <>
-              <p><Link href='/account'>Aðgangur</Link></p>
-              </>
-            )}
+            <ul className={s.header__menuLinks}>
+              <li><Link href='/download'>Gögn</Link></li>
+              <li><Link href='/leaderboard'>Stigatafla</Link></li>
+              <li><Link href='/simplify'>Einfalda</Link></li>
+              <li><Link href='/verify'>Yfirferð</Link></li>
+              {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
+                <li><Link href='/admin'>Admin</Link></li>
+              ) : (
+                <>
+                <li><Link href='/account'>Aðgangur</Link></li>
+                </>
+              )}
+            </ul>
+
+            {menuOpen &&
+              <ul className={s.header__mobileLinks}>
+                <li><Link href='/download'>Gögn</Link></li>
+                <li><Link href='/leaderboard'>Stigatafla</Link></li>
+                <li><Link href='/simplify'>Einfalda</Link></li>
+                <li><Link href='/verify'>Yfirferð</Link></li>
+                {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
+                  <li><Link href='/admin'>Admin</Link></li>
+                ) : (
+                  <>
+                  <li><Link href='/account'>Aðgangur</Link></li>
+                  </>
+                )}
+              </ul>
+            }
+
+            <button className={s.header__hamburgerIcon} onClick={() => { 
+              if (menuOpen) {
+                setMenuOpen(false);
+              } else {
+                setMenuOpen(true);
+              }
+            }}>
+              {menuOpen ? '✕' : '☰'}
+            </button>
 
           </>
         ) : (
           <>
-            <p><Link href='/download'>Gögn</Link></p>
-            <p><Link href='/login'>Innskráning</Link></p>
+            <ul className={s.header__menuLinks}>
+              <li><Link href='/download'>Gögn</Link></li>
+              <li><Link href='/login'>Innskráning</Link></li>
+            </ul>
+            
+            {menuOpen &&
+              <ul className={s.header__mobileLinks}>
+                <li><Link href='/download'>Gögn</Link></li>
+                <li><Link href='/login'>Innskráning</Link></li>
+              </ul>
+            }
+
+            <button className={s.header__hamburgerIcon} onClick={() => { 
+              if (menuOpen) {
+                setMenuOpen(false);
+              } else {
+                setMenuOpen(true);
+              }
+            }}>
+              {menuOpen ? '✕' : '☰'}
+            </button>
           </>
         )}
-      </div>
+      </nav>
     </header>
   )
 }

@@ -5,16 +5,10 @@
     flex-direction: column;
     gap: 1rem;
     padding: 2rem 0.5rem;
-    // position: sticky;
     align-items: center;
     text-align: center;
     justify-items: center;
     // border-top: 1px solid #333;
     font-weight: bold;
-    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2); 
-
-
-    &__link:hover {
-        text-decoration: underline;
-    }
+    box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2);
 }

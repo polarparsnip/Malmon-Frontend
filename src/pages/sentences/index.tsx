@@ -275,7 +275,7 @@ export default function SentencesPage(
                     ) : null}
 
                     {loginContext.userLoggedIn.login && loginContext.userLoggedIn.user.admin ? (
-                      <div><Button onClick={async (event: any) => {
+                      <Button onClick={async (event: any) => {
                         event.preventDefault();
                         try {
                           await adminDeleteSentenceHandler(token, value.id);
@@ -283,7 +283,7 @@ export default function SentencesPage(
                         } catch(e: any) {
                           setError(e.message);
                         }
-                      }}>Eyða Setningu</Button></div>) : null
+                      }}>Eyða Setningu</Button>) : null
                     }
 
                   </div>

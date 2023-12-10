@@ -19,7 +19,7 @@ export default function Home() {
           <div className={styles.indexInfo}>
             <h1>Velkomin</h1>
 
-            <p>Þessi vefsíða er til að safna hlaða niður gögnum sem hægt er að nýta til frekari 
+            <p>Þessi vefsíða er til að safna hlaða og niður gögnum sem hægt er að nýta til frekari 
               rannsókna og þróunar á gervigreindar mállíkunum.
             </p>
             <p>Þessi gögn eru á formi einfaldaðra setninga frá notendum sem eru gerðar útfrá
