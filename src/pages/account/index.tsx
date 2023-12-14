@@ -178,7 +178,6 @@ export default function UserAccountPage(
       </Head>
       <main className={styles.main}>
           <>
-            <div className={styles.grid} >
 
               <div className={styles.userInfo}>
                 <h3>Notendanafn: {userInfo.username}</h3>
@@ -192,8 +191,7 @@ export default function UserAccountPage(
                 {content}
 
               </div>
-
-            </div>    
+ 
           </>
       </main>
     </>

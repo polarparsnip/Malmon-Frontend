@@ -167,7 +167,7 @@ export default function UsersPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.grid}>
+
             <div className={styles.userCards}>
               {users.users.map((value: User) => (
                   <div className={styles.card} key={value.id} >
@@ -195,7 +195,7 @@ export default function UsersPage(
                 <Paging paging={users} query={query} page={'users'}></Paging>
               </div>
             ) : null}
-        </div>
+
       </main>
     </>
   )

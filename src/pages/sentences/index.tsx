@@ -240,7 +240,6 @@ export default function SentencesPage(
       </Head>
       <main className={styles.main}>
 
-        <div className={styles.grid}>
           <div className={styles.cards}>
             
             <div className={styles.adminSentences}>
@@ -325,7 +324,7 @@ export default function SentencesPage(
             ) : null }
 
           </div>
-        </div>
+
       </main>
     </>
   )

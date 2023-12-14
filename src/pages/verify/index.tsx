@@ -225,7 +225,6 @@ export default function VerifyPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.grid}>
 
           <div className={styles.verify} >
             <h2>Upprunaleg setning:</h2>
@@ -272,7 +271,7 @@ export default function VerifyPage(
               </div>
             </Captcha>
           </div>    
-        </div>
+
       </main>
     </>
   )

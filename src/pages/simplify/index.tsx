@@ -215,7 +215,7 @@ export default function SimplifyPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.grid} >
+
           <div className={styles.cards} >
             <SentenceCard value={sentence.sentence} />
             <Captcha>
@@ -244,7 +244,7 @@ export default function SimplifyPage(
               </div>
             </Captcha>
           </div>
-        </div> 
+
       </main>
     </>
   )

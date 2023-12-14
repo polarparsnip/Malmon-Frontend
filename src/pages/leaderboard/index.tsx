@@ -117,7 +117,6 @@ export default function LeaderboardPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.grid}>
 
           <div className={styles.cards}>
 
@@ -132,7 +131,7 @@ export default function LeaderboardPage(
 
             </div>
           </div>
-        </div>
+          
       </main>
     </>
   )

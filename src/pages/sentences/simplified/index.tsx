@@ -206,7 +206,6 @@ export default function SimplifiedSentencesPage(
         <link rel="icon" href="/mlogo.png" />
       </Head>
       <main className={styles.main}>
-        <div className={styles.grid}>
 
           <div className={styles.cards}>
             <div className={styles.adminSentences}>
@@ -266,7 +265,6 @@ export default function SimplifiedSentencesPage(
               </div>
             ) : null}
 
-        </div>
       </main>
     </>
   )
