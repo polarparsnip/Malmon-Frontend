@@ -31,14 +31,14 @@ const registerHandler = async (event: any): Promise<User> => {
     });    
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -67,14 +67,17 @@ export default function Register() {
             <form className={styles.form}
               onSubmit={async (event) => {
                 event.preventDefault();
+
                 try {
                   const userInfo = await registerHandler(event);
+
                   if (userInfo.username !== undefined) {
-                    setFail(false);
+                    // setFail(false);
                     Router.push('/login');
-                  } else {
-                    setFail(true);
-                  }                  
+                  } 
+                  // else {
+                  //   setFail(true);
+                  // }                  
                 } catch(e: any) {
                   setError(e.message);
                 }
@@ -92,7 +95,7 @@ export default function Register() {
 
               <input type='password' id='password' required/>
               
-              {fail ? <p>Ógilt lykilorð/password</p> : <p></p>}
+              {/* {fail ? <p>Ógilt lykilorð/password</p> : <p></p>} */}
               <Button type='submit'>Nýskrá</Button>
             </form>
 

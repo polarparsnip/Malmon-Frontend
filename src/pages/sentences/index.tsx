@@ -32,14 +32,14 @@ const adminRegisterSentenceHandler = async (event: any, token: any): Promise<Sen
     });    
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -70,14 +70,14 @@ const adminPatchSentenceHandler = async (
     });
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -102,14 +102,14 @@ const adminDeleteSentenceHandler = async (token: any, sentenceId: number): Promi
     });    
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
   
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -149,7 +149,7 @@ export const getServerSideProps: GetServerSideProps = async (
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
+    console.error(message.error)
 
     return {
       props: { errorMessage: message.error || 'unknown error'},

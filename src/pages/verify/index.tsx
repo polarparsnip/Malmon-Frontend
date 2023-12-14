@@ -31,14 +31,14 @@ const submitVerificationHandler = async (
     });
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   let updateUser;
@@ -56,14 +56,14 @@ const submitVerificationHandler = async (
     });
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (updateUser && !updateUser.ok) {
     console.error('Error:', updateUser.status, updateUser.statusText);
     const message = await updateUser.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -86,14 +86,14 @@ const submitRejectionHandler = async (token: any, simplifiedSentenceId: number):
     });
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -123,7 +123,7 @@ export const getServerSideProps: GetServerSideProps = async (
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
+    console.error(message.error)
 
     return {
       props: { errorMessage: message.error || 'unknown error'},

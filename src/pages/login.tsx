@@ -32,14 +32,14 @@ const loginHandler = async (event: any): Promise<UserInfo> => {
     });
   } catch(e: any) {
     console.error('Error:', e.message)
-    throw new Error(e.message || 'Unknown error');
+    throw new Error(e || 'Unknown error');
   }
 
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
-    throw new Error(message || 'Unknown error');
+    console.error(message.error)
+    throw new Error(message.error || 'Unknown error');
   }
 
   const result = await res.json();
@@ -53,7 +53,7 @@ const loginHandler = async (event: any): Promise<UserInfo> => {
 
 export default function Login() {
   const loginContext = useUserContext();
-  const [fail, setFail] = useState(false);
+  // const [fail, setFail] = useState(false);
   const [error, setError] = useState(null);
 
   return (
@@ -74,26 +74,29 @@ export default function Login() {
               onSubmit={async (event) => {
                 event.preventDefault();
 
-                try {
-                  const userInfo = await loginHandler(event);
-
+         
+                  let userInfo;
+                  try {
+                    userInfo = await loginHandler(event);
+                  } catch(e: any) {
+                    setError(e.message);
+                  }
+                  
                   if (userInfo && userInfo.user !== undefined) {
                     loginContext.setUserLoggedIn({ login: true, user: userInfo.user });
                     Cookies.set('user', JSON.stringify({ login: true, user: userInfo.user }), { expires: 3 });
-                    setFail(false);
+                    // setFail(false);
 
                     if(userInfo.user.admin) {
                       Router.push('/admin');
                     } else {
                       Router.push('/');
                     }
-                  } else {
-                    setFail(true);
-                  }
+                  } 
+                  // else {
+                  //   setFail(true);
+                  // }
 
-                } catch(e: any) {
-                  setError(e.message);
-                }
               }}
             >
               <label htmlFor='username'>Notendanafn:</label>
@@ -104,7 +107,7 @@ export default function Login() {
 
               <input type='password' id='password' required/>
 
-              {fail ? <p>Ógilt lykilorð/password</p> : <p></p>}
+              {/* {fail ? <p>Ógilt notandanafn/lykilorð</p> : <p></p>} */}
               <Button type='submit'>Innskrá</Button>
             </form>
 

@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async (
   if (res && !res.ok) {
     console.error('Error:', res.status, res.statusText);
     const message = await res.json();
-    console.error(message)
+    console.error(message.error)
 
     return {
       props: { errorMessage: message.error || 'unknown error'},
